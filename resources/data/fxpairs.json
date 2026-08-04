@@ -1,0 +1,81 @@
+{
+    "data": [
+        {
+            "responsive_id": "",
+            "id": 1,
+            "pair": "USD",
+            "logo": "EURUSD.PNG",
+            "symbol": "EUR",
+            "high":"1.06482",
+            "low":"1.04833",
+            "spread":"1.5",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 2,
+            "pair": "JPY",
+            "logo": "USDJPY.PNG",
+            "symbol": "USD",
+            "high":"134.772",
+            "low":"131.993",
+            "spread":"1.4",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 3,
+            "pair": "USD",
+            "logo": "USDGBP.PNG",
+            "symbol": "GBP",
+            "high":"0.82789",
+            "low":"0.82542",
+            "spread":"1.7",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 4,
+            "pair": "CHF",
+            "logo": "USDCHF.PNG",
+            "symbol": "USD",
+            "high":"0.94089",
+            "low":"0.92687",
+            "spread":"1.5",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 5,
+            "pair": "USD",
+            "logo": "AUDUSD.PNG",
+            "symbol": "AUD",
+            "high":"0.68867",
+            "low":"0.67226",
+            "spread":"1.2",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 6,
+            "pair": "CAD",
+            "logo": "USDCAD.PNG",
+            "symbol": "USD",
+            "high":"1.36631",
+            "low":"1.34333",
+            "spread":"1.3",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 7,
+            "pair": "USD",
+            "logo": "NZDUSD.PNG",
+            "symbol": "NDZ",
+            "high":"0.63597",
+            "low":"0.61912",
+            "spread":"0.7",
+            "status": 1
+        }
+    ]
+}

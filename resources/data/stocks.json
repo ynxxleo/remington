@@ -1,0 +1,61 @@
+{
+    "data":[
+          {
+            "responsive_id": "",
+            "id": 1,
+            "symbol": "TSLA",
+            "company": "TESLA, Inc.",
+            "last":"113.06",
+            "change":"2.72",
+            "changepercent":"2.47",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 2,
+            "symbol": "AAPL",
+            "company": "APPLE, Inc.",
+            "last":"129.62",
+            "change":"4.60",
+            "changepercent":"3.60",
+            "status": 1
+        },{
+            "responsive_id": "",
+            "id": 3,
+            "symbol": "NFLX",
+            "company": "NETFLIX, Inc.",
+            "last":"315.55",
+            "change":"5.85",
+            "changepercent":"1.89",
+            "status": 1
+        },{
+            "responsive_id": "",
+            "id": 4,
+            "symbol": "AMZN",
+            "company": "AMAZON.COM, Inc.",
+            "last":"86.08",
+            "change":"2.91",
+            "changepercent":"3.56",
+            "status": 1
+        },
+        {
+            "responsive_id": "",
+            "id": 5,
+            "symbol": "NVDA",
+            "company": "NVIDIA CORPORATION.",
+            "last":"148.59",
+            "change":"5.94",
+            "changepercent":"4.16",
+            "status": 1
+        },{
+            "responsive_id": "",
+            "id": 6,
+            "symbol": "MSFT",
+            "company": "MICROSOFT CORPORATION.",
+            "last":"224.93",
+            "change":"2.62",
+            "changepercent":"1.86",
+            "status": 1
+        }
+        ]
+}
