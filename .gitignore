@@ -3,6 +3,8 @@
 /.ftpquota
 /.well-known/
 /error_log
+/public/error_log
+/public/error.txt
 /bot 1.0.1.sql
 /update_sql_*.sql
 /tmp
