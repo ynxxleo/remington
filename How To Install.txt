@@ -1,0 +1,7 @@
+- Go to Admin Dashboard
+- Go To Frontend Manager
+- Go Click Verify
+- Enter your License
+- Click Install
+- Click Optimize
+- Activate the Theme

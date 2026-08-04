@@ -1,5 +1,10 @@
 /node_modules/
 /.git/
+/.ftpquota
+/.well-known/
+/error_log
+/bot 1.0.1.sql
+/update_sql_*.sql
 /tmp
 /public/hot
 /public/assets/images.zip
