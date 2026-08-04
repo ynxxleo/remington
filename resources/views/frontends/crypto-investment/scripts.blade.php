@@ -1,0 +1,10 @@
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/jquery.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/proper-min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/bootstrap.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/plugin/waypoint.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/plugin/owl.carousel.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/plugin/jquery.rcounter.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/plugin/jquery.magnific-popup.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/plugin/jquery.nice-select.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/plugin/wow.min.js'))}}"></script>
+<script src="{{ asset(mix('assets/frontends/crypto-investment/js/main.js'))}}"></script>
