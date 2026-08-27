@@ -15,6 +15,9 @@
 <link rel="stylesheet" href="{{ asset(mix('css/base/themes/semi-dark-layout.css')) }}" />
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 @php $configData = applClasses(); @endphp
 
@@ -43,3 +46,5 @@
 @endif
 
 @livewireStyles
+<link rel="stylesheet" href="{{ asset('css/nova-ui.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/trading-ui.css') }}" />

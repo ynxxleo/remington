@@ -51,8 +51,7 @@ class SiteController extends Controller
 
     public function contact()
     {
-        $data['page_title'] = "Contact Us";
-        return view('contact', $data);
+        return view('frontend.nova-page', ['page_title' => 'Contact Us', 'pageType' => 'contact']);
     }
 
 

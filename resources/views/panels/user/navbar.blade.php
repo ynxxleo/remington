@@ -53,6 +53,13 @@
     <ul class="nav navbar-nav d-xl-none">
       <li class="nav-item"><a class="nav-link menu-toggle" href="javascript:void(0);"><i class="bi bi-list font-medium-5"></i></i></a></li>
     </ul>
+    <div class="nova-workspace-tabs d-none d-xl-flex">
+      <a class="{{ Request::is('user/dashboard*') ? 'active' : '' }}" href="{{ route('user.home') }}">Overview</a>
+      <a class="{{ Request::is('user/trade*') ? 'active' : '' }}" href="{{ route('user.trade.market') }}">Markets</a>
+      <a class="{{ Request::is('user/wallet*') ? 'active' : '' }}" href="{{ route('user.wallet.index') }}">Wallets</a>
+      <a class="{{ Request::is('user/transaction*') ? 'active' : '' }}" href="{{ route('user.transaction.log') }}">Activity</a>
+      <a class="{{ Request::is('user/news*') ? 'active' : '' }}" href="{{ route('user.news') }}">Insights</a>
+    </div>
     
     
     @if (Request::is('**/trade*', '**/practice*'))
@@ -72,6 +79,10 @@
 
 
   <ul class="nav navbar-nav align-items-center ms-auto">
+
+      <li class="nav-item"><button class="nova-round-action trading-theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><i class="bi bi-moon-stars"></i></button></li>
+      <li class="nav-item d-none d-md-block"><button class="nova-round-action" type="button" aria-label="Search"><i class="bi bi-search"></i></button></li>
+      <li class="nav-item d-none d-xl-block"><span class="nova-date-pill"><i class="bi bi-calendar3"></i>{{ now()->format('d M, Y') }}</span></li>
 
     @if ($plat->binary == 0)
     <li class="nav-item dropdown">

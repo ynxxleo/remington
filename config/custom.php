@@ -5,7 +5,7 @@ return [
         'mainLayoutType' => 'vertical', // Options[String]: vertical(default), horizontal
         'theme' => 'light', // options[String]: 'light'(default), 'dark', 'bordered', 'semi-dark'
         'themeuser' => 'dark', // options[String]: 'light'(default), 'dark', 'bordered', 'semi-dark'
-        'sidebarCollapsed' => true, // options[Boolean]: true, false(default) (warning:this option only applies to the vertical theme.)
+        'sidebarCollapsed' => false, // options[Boolean]: true, false(default) (warning:this option only applies to the vertical theme.)
         'navbarColor' => '', // options[String]: bg--primary, bg--info, bg--warning, bg--success, bg--danger, bg-dark (default: '' for #fff)
         'horizontalMenuType' => 'floating', // options[String]: floating(default) / static /sticky (Warning:this option only applies to the Horizontal theme.)
         'verticalMenuNavbarType' => 'sticky', // options[String]: floating(default) / static / sticky / hidden (Warning:this option only applies to the vertical theme)

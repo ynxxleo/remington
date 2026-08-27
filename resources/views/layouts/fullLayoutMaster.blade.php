@@ -52,6 +52,8 @@ data-col="blank-page"
 data-framework="laravel"
 data-asset-path="{{ asset('/')}}">
 
+  @include('partials.nova-preloader')
+
   <!-- BEGIN: Content-->
   <div class="app-content content {{ $configData['pageClass'] }}">
     <div class="content-overlay"></div>

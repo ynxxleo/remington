@@ -4,18 +4,18 @@
     <div class="col-lg-6 col-md-6">
         <div class="card">
             <div class="card-body">
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.setting.logo_icon_update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row mb-3">
                         <div class="col-md-6 mb-1">
-                            <div class="img-fluid"
+                            <div id="logoPreviewLight" class="img-fluid logoPrev"
                                 style="height:80px;background-size: cover;background-image: url({{ getImage(imagePath()['logoIcon']['path'].'/logo.png', '?'.time()) }})">
                                 <button type="button" class="btn-icon btn-danger rounded"><i
                                         class="bi bi-x"></i></button>
                             </div>
                         </div>
                         <div class="col-md-6 mb-1">
-                            <div class="img-fluid bg-dark"
+                            <div id="logoPreviewDark" class="img-fluid bg-dark logoPrev"
                                 style="height:80px;background-size: cover;background-image: url({{ getImage(imagePath()['logoIcon']['path'].'/logo.png', '?'.time()) }})">
                                 <button type="button" class="btn-icon btn-danger rounded"><i
                                         class="bi bi-x"></i></button>
@@ -33,14 +33,14 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-6 mb-1">
-                            <div class="img-fluid"
+                            <div id="faviconPreviewLight" class="img-fluid iconPrev"
                                 style="height:80px;width:80px;background-size: cover;background-image: url({{ getImage(imagePath()['logoIcon']['path'] .'/favicon.png', '?'.time()) }})">
                                 <button type="button" class="btn-icon btn-danger rounded"><i
                                         class="bi bi-x"></i></button>
                             </div>
                         </div>
                         <div class="col-md-6 mb-1">
-                            <div class="img-fluid bg-dark"
+                            <div id="faviconPreviewDark" class="img-fluid bg-dark iconPrev"
                                 style="height:80px;width:80px;background-size: cover;background-image: url({{ getImage(imagePath()['logoIcon']['path'] .'/favicon.png', '?'.time()) }})">
                                 <button type="button" class="btn-icon btn-danger rounded"><i
                                         class="bi bi-x"></i></button>
@@ -73,4 +73,26 @@
         background-size: 100%;
     }
 </style>
+@endpush
+
+@push('script')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function preview(inputId, targets) {
+        var input = document.getElementById(inputId);
+        if (!input) return;
+        input.addEventListener('change', function () {
+            var file = this.files && this.files[0];
+            if (!file) return;
+            var url = URL.createObjectURL(file);
+            targets.forEach(function (id) {
+                var target = document.getElementById(id);
+                if (target) target.style.backgroundImage = 'url("' + url + '")';
+            });
+        });
+    }
+    preview('profilePicUpload1', ['logoPreviewLight', 'logoPreviewDark']);
+    preview('profilePicUpload2', ['faviconPreviewLight', 'faviconPreviewDark']);
+});
+</script>
 @endpush

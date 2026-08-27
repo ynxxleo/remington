@@ -15,11 +15,7 @@ class HomeController extends Controller
     public function home()
     {
         $page_title = "Home";
-        $template = FrontendTemplates::where('status',1)->first();
-        $page = FrontendPages::where('template_id',$template->template_id)->first();
-        $sections = FrontendSections::where('template_id',$template->template_id)->where('page_id',$page->page_id)->get();
-        $images = frontend_images::where('template_id',$template->template_id)->where('page_id',$page->page_id)->get();
-        return view('frontends.index', compact('page_title','sections','images','template'));
+        return view('frontend.nova-home', compact('page_title'));
     }
     public function index()
     {
@@ -196,12 +192,12 @@ class HomeController extends Controller
 
     public function about(Request $request)
     {
-        return view('frontend.pages.about');
+        return view('frontend.nova-page', ['page_title' => 'About', 'pageType' => 'about']);
     }
 
     public function terms()
     {
-        return view('frontend.pages.terms');
+        return view('frontend.nova-page', ['page_title' => 'Terms', 'pageType' => 'terms']);
     }
     public function seoEdit()
     {

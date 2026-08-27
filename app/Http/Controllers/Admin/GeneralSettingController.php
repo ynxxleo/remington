@@ -90,16 +90,22 @@ class GeneralSettingController extends Controller
     public function logoIconUpdate(Request $request)
     {
         $request->validate([
-            'logo' => 'image|mimes:jpg,jpeg,png,svg',
-            'favicon' => 'image|mimes:png',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'favicon' => 'nullable|image|mimes:png|max:1024',
         ]);
         if ($request->hasFile('logo')) {
             try {
-                $path = imagePath()['logoIcon']['path'];
+                $path = public_path(imagePath()['logoIcon']['path']);
                 if (!file_exists($path)) {
                     mkdir($path, 0755, true);
                 }
-                Image::make($request->logo)->save($path . '/logo.png');
+                Image::make($request->file('logo'))
+                    ->orientate()
+                    ->resize(700, 150, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->save($path . '/logo.png', 92);
             } catch (\Exception $exp) {
                 $notify[] = ['error', 'Logo could not be uploaded.'];
                 return back()->withNotify($notify);
@@ -108,18 +114,18 @@ class GeneralSettingController extends Controller
 
         if ($request->hasFile('favicon')) {
             try {
-                $path = imagePath()['logoIcon']['path'];
+                $path = public_path(imagePath()['logoIcon']['path']);
                 if (!file_exists($path)) {
                     mkdir($path, 0755, true);
                 }
                 $size = explode('x', imagePath()['favicon']['size']);
-                Image::make($request->favicon)->resize($size[0], $size[1])->save($path . '/favicon.png');
+                Image::make($request->file('favicon'))->fit($size[0], $size[1])->save($path . '/favicon.png', 92);
             } catch (\Exception $exp) {
                 $notify[] = ['error', 'Favicon could not be uploaded.'];
                 return back()->withNotify($notify);
             }
         }
-        $notify[] = ['success', 'Logo Icons has been updated.'];
+        $notify[] = ['success', 'Sitewide logo and favicon have been updated.'];
         return back()->withNotify($notify);
     }
 }

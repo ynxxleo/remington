@@ -15,18 +15,18 @@
 
 @section('content')
   <div class="auth-wrapper auth-basic px-2">
+      <aside class="nova-auth-visual" aria-hidden="true">
+          <img src="{{ asset('images/nova/hero-orbit.png') }}" alt="">
+          <div><span>Built for confident decisions</span><h2>Your digital asset journey starts here.</h2><p>Create one account for wallets, exchange, trading and portfolio insights.</p></div>
+      </aside>
       <div class="auth-inner my-2">
           <!-- Register Basic -->
           <div class="card mb-0">
               <div class="card-body">
-                  <a href="#" class="col d-flex justify-content-center mb-1">
-                
-                <div class="brand-text"><img src="https://image.pitchbook.com/uo3McDR3tZeYJqfjrxtn0bUsezJ1649063125284_200x200" style="height: 40px; width: 60px;
-                        alt="{{ __('locale.image')}}"></div>
-            </a>
-
-                  <h4 class="card-title mb-1">Adventure starts here 🚀</h4>
-                  <p class="card-text mb-2">Register to access the trading platform! and get our free $5 worth of BTC </p>
+                  <a href="{{ route('home') }}" class="nova-auth-brand"><img src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a>
+                  <div class="nova-auth-kicker mb-1">Your trading workspace</div>
+                  <h4 class="card-title mb-1">Create your account</h4>
+                  <p class="card-text mb-2">Set up secure access to trading, exchange and portfolio tools.</p>
 
                   <form class="auth-register-form mt-2" method="POST" action="{{ route('register') }}">
                       @csrf
@@ -135,6 +135,8 @@
               @endif
               <button type="submit" class="btn btn-primary w-100" tabindex="5">Sign up</button>
               </form>
+
+              <div class="nova-auth-note"><i class="bi bi-lock"></i><span>Your account details are encrypted in transit. Use a unique password you do not use elsewhere.</span></div>
 
               <p class="text-center mt-2">
                   <span>Already have an account?</span>

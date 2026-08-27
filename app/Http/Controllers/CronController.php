@@ -20,6 +20,7 @@ use App\Models\MLM;
 use App\Models\ScheduledOrders;
 use App\Models\Wallet;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Http;
 
 class CronController extends Controller
@@ -434,38 +435,52 @@ class CronController extends Controller
 
     public function botResult()
     {
-        $bot_contracts = BotContract::where('status', 2)->where('end_date', '<', Carbon::now())->get();
+        $bot_contracts = BotContract::where('status', 2)->where('end_date', '<=', Carbon::now())->pluck('id');
         $gnl = GeneralSetting::first();
         $gnl->last_cron_run =  Carbon::now();
         $gnl->save();
 
-        foreach($bot_contracts as $bot_contract)
-        {
-			$wallet = Wallet::where('user_id',$bot_contract->user_id)->where('symbol',$bot_contract->pair)->first();
-            if($bot_contract->result == 4) {
-                $wallet->balance += $bot_contract->amount + $bot_contract->profit;
-                $wallet->save();
-                $bot_contract->result = 1;
-                $bot_contract->status = 1;
-                $bot_contract->save();
-            } else if($bot_contract->result == 5) {
-                $wallet->balance += $bot_contract->amount - $bot_contract->profit;
-                $wallet->save();
-                $bot_contract->result = 2;
-                $bot_contract->status = 1;
-                $bot_contract->save();
-            } else if($bot_contract->result == 6) {
-                $wallet->balance += $bot_contract->amount;
-                $wallet->save();
-                $bot_contract->result = 3;
-                $bot_contract->status = 1;
-                $bot_contract->save();
-            }
+        foreach ($bot_contracts as $contractId) {
+            DB::transaction(function () use ($contractId) {
+                $contract = BotContract::whereKey($contractId)->lockForUpdate()->first();
+
+                if (! $contract || (int) $contract->status !== 2 || Carbon::parse($contract->end_date)->isFuture()) {
+                    return;
+                }
+
+                $wallet = Wallet::where('user_id', $contract->user_id)
+                    ->where('symbol', $contract->pair)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $wallet) {
+                    return;
+                }
+
+                $settlements = [
+                    4 => ['result' => 1, 'credit' => $contract->amount + $contract->profit],
+                    5 => ['result' => 2, 'credit' => max(0, $contract->amount - $contract->profit)],
+                    6 => ['result' => 3, 'credit' => $contract->amount],
+                ];
+
+                if (! isset($settlements[$contract->result])) {
+                    return;
+                }
+
+                $settlement = $settlements[$contract->result];
+                $wallet->increment('balance', $settlement['credit']);
+                $contract->result = $settlement['result'];
+                $contract->status = 1;
+                $contract->save();
+            });
         }
+
+        return response()->json(['processed' => $bot_contracts->count()]);
     }
     public function botMissed()
     {
-        $bot_contracts = BotContract::where('status', 0)->where('end_date', '>', Carbon::now())->get();
+        // Only expired contracts should enter the settlement pipeline.
+        $bot_contracts = BotContract::where('status', 0)->where('end_date', '<=', Carbon::now())->get();
         $gnl = GeneralSetting::first();
         $gnl->last_cron_run =  Carbon::now();
         $gnl->save();
@@ -473,6 +488,9 @@ class CronController extends Controller
         foreach($bot_contracts as $bot_contract)
         {
             $bot = Bot::where('id',$bot_contract->bot_id)->first();
+            if (! $bot) {
+                continue;
+            }
             if($bot->result_missed == 1) {
                 $bot_contract->result = 4;
                 $bot_contract->status = 2;
@@ -490,6 +508,8 @@ class CronController extends Controller
                 $bot_contract->save();
             }
         }
+
+        return response()->json(['processed' => $bot_contracts->count()]);
     }
 
     public function ForexResult()

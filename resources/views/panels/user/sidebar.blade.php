@@ -1,7 +1,7 @@
 @php
 $configData = applClasses();
 @endphp
-<div class="main-menu menu-fixed {{(($configData['themeuser'] === 'light') || ($configData['themeuser'] === 'semi-dark')) ? 'menu-dark' : 'menu-light'}} menu-accordion menu-shadow" data-scroll-to-active="true">
+<div class="main-menu nova-user-rail menu-fixed menu-light menu-accordion" data-scroll-to-active="true">
   <div class="navbar-header">
     <ul class="nav navbar-nav flex-row">
       <li class="nav-item me-auto">
@@ -9,7 +9,7 @@ $configData = applClasses();
           <span class="brand-logo">
             <img src="{{getImage(imagePath()['logoIcon']['path'] .'/favicon.png')}}" alt="{{ __('locale.image')}}">
           </span>
-          <div class="brand-text"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" alt="{{ __('locale.image')}}"></div>
+          <span class="brand-text nova-sidebar-name">{{ siteName() }}</span>
         </a>
       </li>
       <li class="nav-item nav-toggle">
@@ -23,6 +23,7 @@ $configData = applClasses();
   <div class="shadow-bottom"></div>
   <div class="main-menu-content">
     <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+      <li class="nova-rail-section">Workspace</li>
       {{-- Foreach menu item starts --}}
       @if(isset($usermenuData[0]))
       @foreach($usermenuData[0]->menu as $menu)
@@ -32,6 +33,9 @@ $configData = applClasses();
         <i class="bi bi-three-dots-vertical"></i>
       </li>
       @else
+      @if(isset($menu->name) && $menu->name === 'Transactions')
+      <li class="nova-rail-section">Account</li>
+      @endif
       {{-- Add Custom Class with nav-item --}}
       @php
       $custom_classes = "";
@@ -40,7 +44,7 @@ $configData = applClasses();
       }
       @endphp
       <li class="nav-item {{ $custom_classes }} {{Route::currentRouteName() === $menu->slug ? 'active' : ''}}">
-        <a href="{{isset($menu->url)? url($menu->url):'javascript:void(0)'}}" class="d-flex align-items-center" target="{{isset($menu->newTab) ? '_blank':'_self'}}">
+        <a href="{{isset($menu->url)? url($menu->url):'javascript:void(0)'}}" class="d-flex align-items-center" target="{{isset($menu->newTab) ? '_blank':'_self'}}" title="{{ __($menu->name) }}" aria-label="{{ __($menu->name) }}">
           <i class="bi bi-{{ $menu->icon }}"></i>
           <!--<span class="menu-title text-truncate">{{ __('locale.'.$menu->name) }}</span>-->
           <span class="menu-title text-truncate">{{ __($menu->name) }}</span>

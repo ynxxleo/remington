@@ -18,6 +18,7 @@ data-textdirection="{{ env('MIX_CONTENT_DIRECTION') === 'rtl' ? 'rtl' : 'ltr' }}
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.dataset.tradingTheme=localStorage.getItem('trading-theme')||'light';</script>
     <title>{{ $general->sitename($page_title ?? '') }}</title>
     @if(Request::is('user**'))
         @include('partials.seo')
@@ -39,7 +40,8 @@ window.smartsupp||(function(d) {
 <noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
 
 </head>
-</body>
+<body>
+    @include('partials.nova-preloader')
     @yield('app')
     {{-- <script>
         if ('serviceWorker' in navigator) {

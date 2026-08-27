@@ -9,18 +9,18 @@
 
 @section('content')
   <div class="auth-wrapper auth-basic px-2">
+    <aside class="nova-auth-visual" aria-hidden="true">
+      <img src="{{ asset('images/nova/hero-orbit.png') }}" alt="">
+      <div><span>Intelligent market access</span><h2>One secure view of every opportunity.</h2><p>Trade, exchange and manage your portfolio without losing focus.</p></div>
+    </aside>
     <div class="auth-inner my-2">
       <!-- Login basic -->
       <div class="card mb-0">
         <div class="card-body">
-            <a href="#" class="col d-flex justify-content-center mb-1">
-                
-                <div class="brand-text"><img src="https://image.pitchbook.com/uo3McDR3tZeYJqfjrxtn0bUsezJ1649063125284_200x200" style="height: 40px; width: 60px;"
-                        alt="{{ __('locale.image')}}"></div>
-            </a>
-
-          <h4 class="card-title mb-1">Welcome! 👋</h4>
-          <p class="card-text mb-2">Please sign-in to your account and start the adventure</p>
+            <a href="{{ route('home') }}" class="nova-auth-brand"><img src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a>
+          <div class="nova-auth-kicker mb-1">Secure account access</div>
+          <h4 class="card-title mb-1">Welcome back</h4>
+          <p class="card-text mb-2">Sign in to access your portfolio and trading workspace.</p>
 
           @if (session('status'))
             <div class="alert alert-success mb-1 rounded-0" role="alert">
@@ -70,6 +70,8 @@
             </div>
             <button type="submit" class="btn btn-primary w-100" tabindex="4">Sign in</button>
           </form>
+
+          <div class="nova-auth-note"><i class="bi bi-shield-check"></i><span>Protected access. Always verify the address in your browser before entering your credentials.</span></div>
 
           <p class="text-center mt-2">
             <span>New on our platform?</span>

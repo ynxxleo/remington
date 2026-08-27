@@ -6,6 +6,12 @@
               <span class="d-none d-sm-inline-block">All rights Reserved</span>
               <input type="hidden" id="curProfUserInnerAuthFoots" value="<?= auth()->user()->id ?>" />
             </span>
+            <nav class="nova-app-footer-links d-none d-xl-flex" aria-label="Footer">
+                <a href="{{ route('frontend.pages.about') }}">About</a>
+                <a href="{{ route('contact') }}">Support</a>
+                <a href="{{ route('frontend.pages.terms') }}">Terms</a>
+                @if(Route::has('policy.show'))<a href="{{ route('policy.show') }}">Privacy</a>@endif
+            </nav>
             <div class="float-md-end d-block d-md-inline-block ms-auto my-auto border-start px-1" id="txt"></div>
             <div class="dropdown dropdown-language my-auto border-end border-start px-1">
                 <a id="dropdown-flag" href="#" data-bs-toggle="dropdown" aria-haspopup="true">

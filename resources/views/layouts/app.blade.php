@@ -59,6 +59,15 @@ data-asset-path="{{ asset('/')}}">
         @if(Request::is('admin**'))
             @include('admin.partials.breadcrumb')
         @endif
+        @if(Request::is('user/*') && !Request::is('user/dashboard/practice', 'user/dashboard/trade'))
+          <header class="fin-subpage-head">
+            <div>
+              <small>{{ now()->format('l, d F Y') }}</small>
+              <h1>{{ $page_title ?? 'Workspace' }}</h1>
+            </div>
+            <a href="{{ route('user.home') }}"><i class="bi bi-grid"></i> Overview</a>
+          </header>
+        @endif
         @yield('content')
 
       </div>

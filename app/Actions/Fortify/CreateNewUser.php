@@ -2,12 +2,10 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\AdminNotification;
 use App\Models\Extension;
-use App\Models\GeneralSetting;
 use App\Models\MLM;
-use App\Models\Platform;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -34,51 +32,43 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '',
         ])->validate();
 
-        $gnl = GeneralSetting::first();
         $referBy = session()->get('reference');
-        if ($referBy) {
-            $referUser = User::where('username', $referBy)->first();
-        } else {
-            $referUser = null;
-        }
+        $referUser = $referBy
+            ? User::where('username', $referBy)->first()
+            : null;
 
-        if(Extension::where('id',3)->first()->status == 1){
-            $mlm = new MLM();
-            $mlm->username = $input['username'];
-            $mlm->save();
+        return DB::transaction(function () use ($input, $referBy, $referUser) {
+            $user = User::create([
+                'email' => $input['email'],
+                'password' => Hash::make($input['password']),
+                'name' => $input['firstname'].' '.$input['lastname'],
+                'firstname' => $input['firstname'],
+                'lastname' => $input['lastname'],
+                'username' => $input['username'],
+                'ref_by' => $referUser ? $referUser->id : null,
+                'status' => '1',
+                'role_id' => '2',
+            ]);
 
-            if($referUser != null){
-                $ref = MLM::where('username',$referBy)->first();
-                if ($ref->left == null && $ref->right == null){
-                    $ref->left = $input['username'];
-                } else if ($ref->left == null && $ref->right != null){
-                    $ref->left = $input['username'];
-                } else if ($ref->left != null && $ref->right == null){
-                    $ref->right = $input['username'];
-                } else {
+            // Extension 3 is optional. A missing extension record must not make
+            // an otherwise valid registration fail with a server error.
+            if (optional(Extension::find(3))->status == 1) {
+                MLM::firstOrCreate(['username' => $input['username']]);
+
+                if ($referUser) {
+                    $ref = MLM::where('username', $referBy)->lockForUpdate()->first();
+
+                    if ($ref && $ref->left === null) {
+                        $ref->left = $input['username'];
+                        $ref->save();
+                    } elseif ($ref && $ref->right === null) {
+                        $ref->right = $input['username'];
+                        $ref->save();
+                    }
                 }
-                $ref->save();
             }
-        }
 
-        $user = new User();
-
-        return User::create([
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
-            'name' => $input['firstname'].' '.$input['lastname'],
-            'firstname' => $input['firstname'],
-            'lastname' => $input['lastname'],
-            'username' => $input['username'],
-            'ref_by' => $referUser ? $referUser->id : null,
-            'status' => '1',
-            'role_id' => '2',
-        ]);
-
-        $adminNotification = new AdminNotification();
-        $adminNotification->user_id = $user->id;
-        $adminNotification->title = 'New member registered';
-        $adminNotification->click_url = route('admin.users.detail',$user->id);
-        $adminNotification->save();
+            return $user;
+        });
     }
 }

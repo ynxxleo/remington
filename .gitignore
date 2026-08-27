@@ -1,4 +1,5 @@
 /node_modules/
+/.local-mysql/
 /.git/
 /.ftpquota
 /.well-known/
@@ -18,9 +19,17 @@
 /public/data
 /public/fonts
 /public/images
+!/public/images/
+/public/images/*
+!/public/images/nova/
+!/public/images/nova/hero-orbit.png
 /public/storage
 /public/js
 /public/css
+!/public/css/
+/public/css/*
+!/public/css/nova-ui.css
+!/public/css/trading-ui.css
 /public/vendors
 /storage/*.key
 /storage/logs/*.log

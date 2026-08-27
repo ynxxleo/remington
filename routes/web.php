@@ -13,7 +13,6 @@ use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\RssfeedController;
 use App\Http\Controllers\WatchlistController;
 use App\Models\Extension;
-use App\Models\Platform;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/clear-cache', function() {
@@ -93,21 +92,9 @@ Route::post('install', [UpdateController::class, 'download_update'])->name('inst
 |--------------------------------------------------------------------------
 */
 
-// Root route
-
-if(Platform::where('id',1)->first()->subdomain == 1){
-    if(Platform::where('id',1)->first()->binary == 1) {
-        Route::get('/', function () {
-            return redirect(route('user.home.practice'));
-        })->name('home');
-    } else {
-        Route::get('/', function () {
-            return redirect(route('user.home.exchange'));
-        })->name('home');
-    }
-} else {
-    Route::get('/', [HomeController::class, 'home'])->name('home');
-}
+// Keep the public landing page available regardless of trading-mode settings.
+// Authenticated users can still enter the correct workspace through /user/dashboard.
+Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('terms', [HomeController::class, 'terms'])->name('frontend.pages.terms');
 Route::get('about', [HomeController::class, 'about'])->name('frontend.pages.about');
 Route::post('/subscribe', 'SiteController@subscribe')->name('subscribe');
