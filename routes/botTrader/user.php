@@ -4,6 +4,7 @@ use App\Http\Controllers\MarketController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('dashboard/bot', 'BotController@dash')->middleware('checkKYC','checkBot')->name('home.bot');
+Route::get('market-data/candles', 'BotController@candles')->middleware('checkKYC')->name('market.candles');
 Route::group(['middleware' => 'checkKYC', 'prefix' => 'bot', 'as' => 'bot.'], function() {
     Route::get('/', 'BotController@index')->middleware('checkKYC','checkBot')->name('index');
     Route::get('{symbol}/{pair}', 'BotController@bot')->middleware('checkKYC','checkBot')->name('now');

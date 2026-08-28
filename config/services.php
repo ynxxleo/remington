@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'twelve_data' => [
+        'key' => env('TWELVE_DATA_API_KEY'),
+        'url' => env('TWELVE_DATA_API_URL', 'https://api.twelvedata.com'),
+    ],
+
 ];

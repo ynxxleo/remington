@@ -17,10 +17,105 @@ use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class BotController extends Controller
 {
+    public function candles(Request $request)
+    {
+        $data = $request->validate([
+            'symbol' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9.\-]+$/'],
+            'pair' => ['nullable', 'string', 'max:12', 'regex:/^[A-Za-z0-9.\-]+$/'],
+            'asset' => ['required', 'in:crypto,forex,stock'],
+            'interval' => ['required', 'in:1min,5min,15min,30min,1h,1day'],
+        ]);
+
+        $symbol = strtoupper($data['symbol']);
+        $pair = strtoupper($data['pair'] ?? '');
+        $cacheKey = 'market-candles:'.implode(':', [$data['asset'], $symbol, $pair, $data['interval']]);
+
+        try {
+            return response()->json(Cache::remember($cacheKey, now()->addSeconds(45), function () use ($data, $symbol, $pair) {
+                $apiKey = config('services.twelve_data.key');
+
+                if ($apiKey) {
+                    $providerSymbol = $data['asset'] === 'stock'
+                        ? $symbol
+                        : $symbol.'/'.$pair;
+                    $response = Http::acceptJson()->timeout(12)->retry(2, 250)->get(
+                        rtrim(config('services.twelve_data.url'), '/').'/time_series',
+                        [
+                            'symbol' => $providerSymbol,
+                            'interval' => $data['interval'],
+                            'outputsize' => 180,
+                            'timezone' => 'UTC',
+                            'apikey' => $apiKey,
+                        ]
+                    );
+
+                    if ($response->successful() && $response->json('status') !== 'error') {
+                        $candles = collect($response->json('values', []))->reverse()->values()->map(function ($bar) {
+                            return [
+                                'time' => Carbon::parse($bar['datetime'], 'UTC')->timestamp * 1000,
+                                'open' => (float) $bar['open'],
+                                'high' => (float) $bar['high'],
+                                'low' => (float) $bar['low'],
+                                'close' => (float) $bar['close'],
+                                'volume' => (float) ($bar['volume'] ?? 0),
+                            ];
+                        })->all();
+
+                        if (count($candles)) {
+                            return ['provider' => 'Twelve Data', 'candles' => $candles];
+                        }
+                    }
+                }
+
+                // Crypto remains usable without a paid provider and is requested
+                // by the server so browser-region restrictions cannot blank the chart.
+                if ($data['asset'] === 'crypto') {
+                    $interval = [
+                        '1min' => '1m', '5min' => '5m', '15min' => '15m',
+                        '30min' => '30m', '1h' => '1h', '1day' => '1d',
+                    ][$data['interval']];
+                    $response = Http::acceptJson()->timeout(12)->retry(2, 250)->get(
+                        'https://api.binance.com/api/v3/klines',
+                        ['symbol' => $symbol.$pair, 'interval' => $interval, 'limit' => 180]
+                    );
+
+                    if ($response->successful()) {
+                        $candles = collect($response->json())->map(function ($bar) {
+                            return [
+                                'time' => (int) $bar[0],
+                                'open' => (float) $bar[1],
+                                'high' => (float) $bar[2],
+                                'low' => (float) $bar[3],
+                                'close' => (float) $bar[4],
+                                'volume' => (float) $bar[5],
+                            ];
+                        })->all();
+
+                        if (count($candles)) {
+                            return ['provider' => 'Binance', 'candles' => $candles];
+                        }
+                    }
+                }
+
+                throw new \RuntimeException('Market data is temporarily unavailable.');
+            }));
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => $data['asset'] === 'crypto'
+                    ? 'Live candles are temporarily unavailable. Please retry.'
+                    : 'Add TWELVE_DATA_API_KEY to the server environment to enable live FX and stock candles.',
+            ], 503);
+        }
+    }
+
     public function index()
     {
         $page_title = 'Bot Trader';

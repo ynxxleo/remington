@@ -9,15 +9,34 @@ $detect = new Mobile_Detect;
     <style>
         .market-chart-shell {
             width: 100%;
-            height: clamp(620px, 72vh, 820px);
+            height: clamp(650px, 76vh, 840px);
             min-height: 620px;
             overflow: hidden;
             border: 1px solid rgba(148, 163, 184, .16);
             border-radius: 22px;
-            background: #070d0b;
+            background: linear-gradient(180deg, #0a1411 0%, #070d0b 100%);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .22);
         }
-        .market-chart-shell .tradingview-widget-container,
-        .market-chart-shell .tradingview-widget-container__widget { width: 100%; height: 100%; }
+        .native-chart { height: 100%; display: flex; flex-direction: column; color: #e8f0ec; }
+        .native-chart__topbar { min-height: 68px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid rgba(148,163,184,.14); background: rgba(255,255,255,.025); }
+        .native-chart__identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .native-chart__mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; color: #07100d; background: #20e19a; font-weight: 800; box-shadow: 0 0 0 5px rgba(32,225,154,.08); }
+        .native-chart__symbol { font-size: 1.05rem; font-weight: 750; letter-spacing: .025em; white-space: nowrap; }
+        .native-chart__price { color: #91a099; font-size: .78rem; margin-top: 2px; }
+        .native-chart__price strong { color: #edf6f1; font-weight: 650; }
+        .native-chart__intervals { display: flex; gap: 5px; padding: 4px; border-radius: 13px; background: #111c18; }
+        .native-chart__interval { border: 0; border-radius: 9px; padding: 8px 10px; color: #87968f; background: transparent; font-size: .78rem; font-weight: 650; transition: .18s ease; }
+        .native-chart__interval:hover { color: #e9f2ed; background: rgba(255,255,255,.05); }
+        .native-chart__interval.is-active { color: #07100d; background: #20e19a; }
+        .native-chart__body { position: relative; flex: 1; min-height: 0; padding: 8px 8px 0; }
+        .native-chart__main { height: 68%; min-height: 330px; }
+        .native-chart__indicator { height: 30%; min-height: 150px; border-top: 1px solid rgba(148,163,184,.12); }
+        .native-chart__status { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; background: rgba(7,13,11,.88); backdrop-filter: blur(8px); }
+        .native-chart__status[hidden] { display: none; }
+        .native-chart__loader { width: 34px; height: 34px; margin: 0 auto 12px; border: 3px solid rgba(32,225,154,.18); border-top-color: #20e19a; border-radius: 50%; animation: chart-spin .8s linear infinite; }
+        .native-chart__retry { margin-top: 12px; border: 1px solid rgba(32,225,154,.4); border-radius: 10px; padding: 8px 14px; color: #20e19a; background: transparent; }
+        .native-chart__footer { min-height: 42px; padding: 8px 18px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(148,163,184,.12); color: #75847d; font-size: .72rem; }
+        @keyframes chart-spin { to { transform: rotate(360deg); } }
         .market-chart-column { min-width: 0; }
         .market-trade-actions { min-width: 0; color: #e8f0ec; }
         .market-trade-actions .card {
@@ -85,10 +104,17 @@ $detect = new Mobile_Detect;
         }
         @media (max-width: 767px) {
             .market-chart-shell {
-                height: min(68vh, 620px);
-                min-height: 500px;
+                height: 650px;
+                min-height: 650px;
                 border-radius: 16px;
             }
+            .native-chart__topbar { align-items: flex-start; padding: 12px; }
+            .native-chart__identity { padding-top: 4px; }
+            .native-chart__mark { width: 34px; height: 34px; }
+            .native-chart__intervals { max-width: 58%; overflow-x: auto; }
+            .native-chart__interval { padding: 7px 9px; }
+            .native-chart__body { padding-inline: 0; }
+            .native-chart__main { min-height: 340px; }
             .bot-mobile-actions { position: relative !important; inset: auto !important; margin-top: 1rem; }
         }
     </style>
@@ -363,52 +389,94 @@ $detect = new Mobile_Detect;
 
 @endsection
 @section('page-script')
+<script src="{{ asset('vendors/js/charts/apexcharts.min.js') }}"></script>
 @endsection
 @push('script')
 @php
-    $chartSymbol = $crypto
-        ? 'BINANCE:' . strtoupper($symbol . $pair)
-        : (strtolower($pair) === 'stock' ? strtoupper($symbol) : 'FX:' . strtoupper($symbol . $pair));
+    $chartAsset = $crypto ? 'crypto' : (strtolower($pair) === 'stock' ? 'stock' : 'forex');
 @endphp
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.js-market-chart').forEach(function (container) {
-            var widget = document.createElement('div');
-            widget.className = 'tradingview-widget-container';
-            widget.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-            container.appendChild(widget);
-
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-            script.async = true;
-            script.textContent = JSON.stringify({
-                autosize: true,
-                symbol: @json($chartSymbol),
-                interval: '15',
-                timezone: 'Etc/UTC',
-                theme: 'dark',
-                backgroundColor: '#070d0b',
-                gridColor: 'rgba(148, 163, 184, 0.08)',
-                style: '1',
-                locale: 'en',
-                allow_symbol_change: true,
-                calendar: false,
-                details: false,
-                hide_side_toolbar: false,
-                hide_top_toolbar: false,
-                hide_legend: false,
-                hide_volume: false,
-                hotlist: false,
-                save_image: false,
-                withdateranges: true,
-                studies: ['STD;MACD']
-            });
-            widget.appendChild(script);
+            mountNativeMarketChart(container);
         });
-
         $('.se-pre-con').fadeOut('slow');
     });
+
+    function mountNativeMarketChart(container) {
+        var symbol = @json(strtoupper($symbol));
+        var pair = @json(strtoupper($pair));
+        var asset = @json($chartAsset);
+        var endpoint = @json(route('user.market.candles'));
+        var candleChart = null, macdChart = null;
+
+        container.innerHTML = '<div class="native-chart">' +
+            '<div class="native-chart__topbar"><div class="native-chart__identity"><span class="native-chart__mark">' + symbol.charAt(0) + '</span><div><div class="native-chart__symbol">' + symbol + (asset === 'stock' ? '' : ' / ' + pair) + '</div><div class="native-chart__price">Loading live market data…</div></div></div>' +
+            '<div class="native-chart__intervals" aria-label="Chart interval"><button type="button" class="native-chart__interval" data-interval="1min">1m</button><button type="button" class="native-chart__interval" data-interval="5min">5m</button><button type="button" class="native-chart__interval is-active" data-interval="15min">15m</button><button type="button" class="native-chart__interval" data-interval="1h">1h</button><button type="button" class="native-chart__interval" data-interval="1day">1D</button></div></div>' +
+            '<div class="native-chart__body"><div class="native-chart__status"><div><div class="native-chart__loader"></div><span>Loading live candles…</span></div></div><div class="native-chart__main"></div><div class="native-chart__indicator"></div></div>' +
+            '<div class="native-chart__footer"><span>MACD 12 · 26 · 9</span><span>UTC · Live market data</span></div></div>';
+
+        var status = container.querySelector('.native-chart__status');
+        var price = container.querySelector('.native-chart__price');
+        container.querySelectorAll('.native-chart__interval').forEach(function (button) {
+            button.addEventListener('click', function () {
+                container.querySelectorAll('.native-chart__interval').forEach(function (item) { item.classList.remove('is-active'); });
+                button.classList.add('is-active'); load(button.dataset.interval);
+            });
+        });
+
+        function setStatus(message, retry) {
+            status.hidden = !message;
+            if (!message) return;
+            status.innerHTML = retry ? '<div><div>' + message + '</div><button type="button" class="native-chart__retry">Retry</button></div>' : '<div><div class="native-chart__loader"></div><span>' + message + '</span></div>';
+            var retryButton = status.querySelector('.native-chart__retry');
+            if (retryButton) retryButton.addEventListener('click', function () { load(container.querySelector('.is-active').dataset.interval); });
+        }
+        function ema(values, period) {
+            var multiplier = 2 / (period + 1), result = [], previous = values[0] || 0;
+            values.forEach(function (value, index) { previous = index ? (value - previous) * multiplier + previous : value; result.push(previous); });
+            return result;
+        }
+        function macdSeries(candles) {
+            var closes = candles.map(function (bar) { return bar.close; }), fast = ema(closes, 12), slow = ema(closes, 26);
+            var line = closes.map(function (_, index) { return fast[index] - slow[index]; }), signal = ema(line, 9);
+            return {
+                line: candles.map(function (bar, index) { return [bar.time, line[index]]; }),
+                signal: candles.map(function (bar, index) { return [bar.time, signal[index]]; }),
+                histogram: candles.map(function (bar, index) { return { x: bar.time, y: line[index] - signal[index], fillColor: line[index] >= signal[index] ? '#20e19a' : '#ff5263' }; })
+            };
+        }
+        function render(payload) {
+            var candles = payload.candles || [];
+            if (!candles.length) throw new Error('No candle data was returned.');
+            if (candleChart) candleChart.destroy(); if (macdChart) macdChart.destroy();
+            var baseChart = { foreColor: '#819089', fontFamily: 'inherit', animations: { enabled: false }, toolbar: { show: false }, zoom: { enabled: true, type: 'x', autoScaleYaxis: true }, background: 'transparent' };
+            candleChart = new ApexCharts(container.querySelector('.native-chart__main'), {
+                chart: Object.assign({ type: 'candlestick', height: '100%' }, baseChart),
+                series: [{ name: 'Price', type: 'candlestick', data: candles.map(function (bar) { return { x: bar.time, y: [bar.open, bar.high, bar.low, bar.close] }; }) }, { name: 'Volume', type: 'bar', data: candles.map(function (bar) { return { x: bar.time, y: bar.volume, fillColor: bar.close >= bar.open ? 'rgba(32,225,154,.22)' : 'rgba(255,82,99,.22)' }; }) }],
+                plotOptions: { candlestick: { colors: { upward: '#20e19a', downward: '#ff5263' }, wick: { useFillColor: true } }, bar: { columnWidth: '78%' } }, stroke: { width: [1, 0] },
+                grid: { borderColor: 'rgba(148,163,184,.09)', strokeDashArray: 2 }, xaxis: { type: 'datetime', labels: { datetimeUTC: true }, axisBorder: { color: 'rgba(148,163,184,.16)' } },
+                yaxis: [{ opposite: true, decimalsInFloat: 5, tooltip: { enabled: true } }, { show: false, seriesName: 'Volume' }], tooltip: { theme: 'dark', shared: true }, legend: { show: false }
+            });
+            var macd = macdSeries(candles);
+            macdChart = new ApexCharts(container.querySelector('.native-chart__indicator'), {
+                chart: Object.assign({ type: 'line', height: '100%' }, baseChart), series: [{ name: 'MACD', type: 'line', data: macd.line }, { name: 'Signal', type: 'line', data: macd.signal }, { name: 'Histogram', type: 'bar', data: macd.histogram }],
+                colors: ['#42a5ff', '#ff9f43', '#20e19a'], stroke: { width: [2, 2, 0], curve: 'smooth' }, plotOptions: { bar: { columnWidth: '76%' } },
+                grid: { borderColor: 'rgba(148,163,184,.08)', strokeDashArray: 2 }, xaxis: { type: 'datetime', labels: { datetimeUTC: true }, axisBorder: { color: 'rgba(148,163,184,.16)' } }, yaxis: { opposite: true, decimalsInFloat: 5 }, tooltip: { theme: 'dark', shared: true }, legend: { show: false }
+            });
+            Promise.all([candleChart.render(), macdChart.render()]).then(function () { setStatus(null); });
+            var last = candles[candles.length - 1], change = last.close - last.open;
+            price.innerHTML = '<strong>' + last.close.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</strong> <span style="color:' + (change >= 0 ? '#20e19a' : '#ff5263') + '">' + (change >= 0 ? '+' : '') + change.toFixed(6) + '</span> · ' + payload.provider;
+        }
+        function load(interval) {
+            setStatus('Loading live candles…', false);
+            var query = new URLSearchParams({ symbol: symbol, pair: pair, asset: asset, interval: interval });
+            fetch(endpoint + '?' + query.toString(), { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+                .then(function (response) { return response.json().then(function (body) { if (!response.ok) throw new Error(body.message || 'Market data request failed.'); return body; }); })
+                .then(render).catch(function (error) { setStatus(error.message, true); price.textContent = 'Market data unavailable'; });
+        }
+        load('15min');
+    }
 </script>
 {{-- Legacy Binance socket and Devexperts chart code removed: those browser-direct
      services are region-blocked or retired and left the production chart blank. --}}
