@@ -18,7 +18,7 @@ data-textdirection="{{ env('MIX_CONTENT_DIRECTION') === 'rtl' ? 'rtl' : 'ltr' }}
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>document.documentElement.dataset.tradingTheme=localStorage.getItem('trading-theme')||'light';</script>
+    <script>document.documentElement.dataset.tradingTheme=localStorage.getItem('trading-theme')||'dark';</script>
     <title>{{ $general->sitename($page_title ?? '') }}</title>
     @if(Request::is('user**'))
         @include('partials.seo')
