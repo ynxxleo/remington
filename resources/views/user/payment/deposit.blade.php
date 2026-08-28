@@ -14,7 +14,7 @@
                 <div class="card-body card-body-deposit text-center">
                     <a class="col mt-1" href="https://www.coinbase.com/buy-bitcoin"><button class="btn btn-light"> <img src="https://images.ctfassets.net/q5ulk4bp65r7/3TBS4oVkD1ghowTqVQJlqj/2dfd4ea3b623a7c0d8deb2ff445dee9e/Consumer_Wordmark.svg" height="15px"> </button></a>
                                 <a class="col mt-1" href="https://www.binance.com/en/buy-sell-crypto/"><button class="btn btn-light"><img src="https://coinwire.com/wp-content/uploads/2021/07/p-2-2048x573.png" height="15px"></button></a></br>
-                                <a class="col mt-1" href="https://www.moonpay.com/buy"><button class="btn btn-light"><img src="https://www.moonpay.com/assets/logo-full-purple.svg" height="15px"></button></a>
+                                <a class="col mt-1" href="https://www.moonpay.com/buy" target="_blank" rel="noopener noreferrer" aria-label="Buy cryptocurrency with MoonPay"><button type="button" class="btn btn-light"><img src="{{ asset('assets/images/providers/moonpay.svg') }}" height="20" width="89" alt="MoonPay"></button></a>
                                 <a class="col mt-1" href="https://trustwallet.com/buy-bitcoin/"><button class="btn btn-light"><img src="https://www.investopedia.com/thmb/K41phOMhLjbHmxmrcaaaFvEFr8s=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Trust_Wallet_logo-aa471e18a7844e38b608a3e8da560fe3.jpg" height="15px" width="60px"></button></a>
                                 
                 </div>

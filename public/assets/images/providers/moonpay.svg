@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="142" height="32" viewBox="0 0 142 32" role="img" aria-labelledby="title">
+  <title id="title">MoonPay</title>
+  <g fill="none" fill-rule="evenodd">
+    <circle cx="16" cy="16" r="15" fill="#7D00FF"/>
+    <path d="M21.8 7.7a9.6 9.6 0 1 0 2.5 15.6A8.2 8.2 0 1 1 21.8 7.7Z" fill="#FFF"/>
+    <circle cx="23.5" cy="10" r="1.6" fill="#FFF"/>
+    <text x="39" y="22.2" fill="#1B0A2E" font-family="Inter, Arial, sans-serif" font-size="17.5" font-weight="750" letter-spacing="-.4">MoonPay</text>
+  </g>
+</svg>
