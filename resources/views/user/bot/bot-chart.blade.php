@@ -40,6 +40,49 @@ $detect = new Mobile_Detect;
             background: #e8eeeb !important;
         }
         .market-trade-actions .btn { white-space: normal; }
+        #botTypeModal .modal-content {
+            color: #e9f2ed;
+            border: 1px solid rgba(148, 163, 184, .2);
+            background: #0a1310 !important;
+            box-shadow: 0 28px 80px rgba(0, 0, 0, .55);
+        }
+        #botTypeModal .modal-header {
+            min-height: 72px;
+            border-bottom-color: rgba(148, 163, 184, .16);
+        }
+        #botTypeModal .btn-close {
+            opacity: 1;
+            filter: invert(1) grayscale(1);
+            background-color: rgba(255, 255, 255, .08);
+            border-radius: 14px;
+        }
+        #botTypeModal .bg-wallet {
+            color: #dce8e2 !important;
+            border: 1px solid rgba(148, 163, 184, .16);
+            background: #101b17 !important;
+            transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+        }
+        #botTypeModal .bg-wallet:hover {
+            transform: translateY(-2px);
+            border-color: rgba(32, 225, 154, .48);
+            background: #14231d !important;
+        }
+        #botTypeModal .bg-wallet-active {
+            border-color: #20e19a !important;
+            background: rgba(32, 225, 154, .1) !important;
+        }
+        #botTypeModal .bg-wallet .text-white,
+        #botTypeModal .bg-wallet .fw-bold { color: #f5faf7 !important; }
+        #botTypeModal .bg-wallet .text-warning { color: #ffad55 !important; }
+        #botTypeModal .bg-wallet .text-success { color: #20e19a !important; }
+        #botTypeModal .bg-wallet img {
+            width: 100%;
+            max-width: 96px;
+            aspect-ratio: 1;
+            object-fit: contain;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .06);
+        }
         @media (max-width: 767px) {
             .market-chart-shell {
                 height: min(68vh, 620px);
