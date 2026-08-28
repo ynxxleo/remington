@@ -95,6 +95,9 @@ Route::post('install', [UpdateController::class, 'download_update'])->name('inst
 // Keep the public landing page available regardless of trading-mode settings.
 // Authenticated users can still enter the correct workspace through /user/dashboard.
 Route::get('/', [HomeController::class, 'home'])->name('home');
+Route::get('/market-data/bitcoin', [HomeController::class, 'bitcoinMarket'])
+    ->middleware('throttle:60,1')
+    ->name('market-data.bitcoin');
 Route::get('terms', [HomeController::class, 'terms'])->name('frontend.pages.terms');
 Route::get('about', [HomeController::class, 'about'])->name('frontend.pages.about');
 Route::post('/subscribe', 'SiteController@subscribe')->name('subscribe');

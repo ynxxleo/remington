@@ -7,6 +7,7 @@ use App\Models\frontend_images;
 use App\Models\FrontendPages;
 use App\Models\FrontendSections;
 use App\Models\FrontendTemplates;
+use App\Models\CryptoCurrencyPrice;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,30 @@ class HomeController extends Controller
     public function home()
     {
         $page_title = "Home";
-        return view('frontend.nova-home', compact('page_title'));
+        $bitcoin = CryptoCurrencyPrice::where('symbol', 'BTC')->first();
+
+        return view('frontend.nova-home', compact('page_title', 'bitcoin'));
+    }
+
+    public function bitcoinMarket()
+    {
+        $bitcoin = CryptoCurrencyPrice::where('symbol', 'BTC')->first();
+
+        if (!$bitcoin || !is_numeric($bitcoin->price)) {
+            return response()->json([
+                'available' => false,
+                'message' => 'Bitcoin market data is not available yet.',
+            ], 503);
+        }
+
+        return response()->json([
+            'available' => true,
+            'symbol' => 'BTC',
+            'currency' => 'USD',
+            'price' => (float) $bitcoin->price,
+            'change_24h' => is_numeric($bitcoin->twenty_four) ? (float) $bitcoin->twenty_four : null,
+            'updated_at' => optional($bitcoin->updated_at)->toIso8601String(),
+        ]);
     }
     public function index()
     {

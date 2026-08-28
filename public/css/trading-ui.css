@@ -396,3 +396,8 @@ body.vertical-layout .input-group:has(#amount) .input-group-text,
 .nova-hero-image-light {
   display: none !important;
 }
+
+.nova-market-card [data-bitcoin-change].is-negative,
+.nova-ticker [data-bitcoin-change].is-negative {
+  color: #ff6270 !important;
+}

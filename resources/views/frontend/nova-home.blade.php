@@ -21,9 +21,9 @@
     <section class="nova-hero">
         <div class="nova-hero-glow"></div>
         <div class="nova-hero-copy"><span class="nova-eyebrow"><i class="bi bi-stars"></i> A clearer way to trade</span><h1>Own your next <span>market move.</span></h1><p>One secure workspace for trading, exchanging and managing digital assets—with the context you need to act with confidence.</p><div class="nova-hero-actions"><a class="nova-button" href="{{ route('register') }}">Start trading <i class="bi bi-arrow-right"></i></a><a class="nova-button nova-button-ghost" href="#platform"><i class="bi bi-play-fill"></i> Explore platform</a></div><div class="nova-trust-row"><span><i class="bi bi-shield-check"></i> Account protection</span><span><i class="bi bi-lightning-charge"></i> Fast execution</span><span><i class="bi bi-headset"></i> Dedicated support</span></div></div>
-        <div class="nova-hero-visual" aria-hidden="true"><img class="nova-hero-image-dark" src="{{ asset('images/nova/hero-orbit.png') }}" alt=""><img class="nova-hero-image-light" src="{{ asset('images/nova/hero-orbit-light.png') }}" alt=""><div class="nova-float-card nova-market-card"><div><span class="nova-coin">B</span><span>Bitcoin<small>BTC / USD</small></span></div><strong>$67,482.20 <small>+4.18%</small></strong><svg viewBox="0 0 180 42"><path d="M1 34 C24 38,30 12,51 22 S80 36,96 17 S130 6,143 14 S163 9,179 3"/></svg></div><div class="nova-float-card nova-balance-card"><small>Portfolio balance</small><strong>$126,640.08</strong><span><i class="bi bi-graph-up-arrow"></i> 5.14% this month</span></div></div>
+        <div class="nova-hero-visual" aria-hidden="true"><img class="nova-hero-image-dark" src="{{ asset('images/nova/hero-orbit.png') }}" alt=""><div class="nova-float-card nova-market-card"><div><span class="nova-coin">B</span><span>Bitcoin<small>BTC / USD · Live</small></span></div><strong><span data-bitcoin-price>{{ $bitcoin && is_numeric($bitcoin->price) ? '$'.number_format($bitcoin->price, 2) : 'Loading…' }}</span> <small data-bitcoin-change class="{{ $bitcoin && $bitcoin->twenty_four < 0 ? 'is-negative' : '' }}">{{ $bitcoin && is_numeric($bitcoin->twenty_four) ? (($bitcoin->twenty_four >= 0 ? '+' : '').number_format($bitcoin->twenty_four, 2).'%') : '' }}</small></strong><svg viewBox="0 0 180 42"><path d="M1 34 C24 38,30 12,51 22 S80 36,96 17 S130 6,143 14 S163 9,179 3"/></svg></div><div class="nova-float-card nova-balance-card"><small>Portfolio balance</small><strong>$126,640.08</strong><span><i class="bi bi-graph-up-arrow"></i> 5.14% this month</span></div></div>
     </section>
-    <section class="nova-ticker"><span>Market snapshot</span><div><b>BTC</b> $67,482 <em>+4.18%</em></div><div><b>ETH</b> $3,471 <em>+2.84%</em></div><div><b>SOL</b> $174.82 <em>+6.12%</em></div><div><b>USDT</b> $1.00 <em>+0.01%</em></div></section>
+    <section class="nova-ticker"><span>Market snapshot</span><div><b>BTC</b> <span data-bitcoin-price>{{ $bitcoin && is_numeric($bitcoin->price) ? '$'.number_format($bitcoin->price, 2) : 'Loading…' }}</span> <em data-bitcoin-change class="{{ $bitcoin && $bitcoin->twenty_four < 0 ? 'is-negative' : '' }}">{{ $bitcoin && is_numeric($bitcoin->twenty_four) ? (($bitcoin->twenty_four >= 0 ? '+' : '').number_format($bitcoin->twenty_four, 2).'%') : '' }}</em></div><div><b>ETH</b> $3,471 <em>+2.84%</em></div><div><b>SOL</b> $174.82 <em>+6.12%</em></div><div><b>USDT</b> $1.00 <em>+0.01%</em></div></section>
     <section class="nova-proof" aria-label="Platform highlights"><article><strong>24/7</strong><span>Market access</span></article><article><strong>99.9%</strong><span>Platform availability target</span></article><article><strong>2FA</strong><span>Account protection</span></article><article><strong>One</strong><span>Unified trading workspace</span></article></section>
     <section class="nova-section" id="platform"><div class="nova-section-heading"><span class="nova-eyebrow">Everything connected</span><h2>A complete market toolkit.<br>One calm interface.</h2><p>Move from insight to execution without stitching together multiple platforms.</p></div><div class="nova-feature-grid">
         <article class="nova-feature nova-feature-wide"><div class="nova-icon"><i class="bi bi-bar-chart-line"></i></div><h3>Professional trading</h3><p>Responsive charts, live market context, flexible contracts and fast execution in one focused workspace.</p><div class="nova-mini-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></article>
@@ -37,5 +37,28 @@
     <section class="nova-cta" id="markets"><span class="nova-eyebrow">Your next move starts here</span><h2>Trade with more clarity.</h2><p>Join a modern digital asset experience built around control, speed and confidence.</p><a class="nova-button" href="{{ route('register') }}">Create free account <i class="bi bi-arrow-up-right"></i></a></section>
 </main>
 <footer class="nova-footer nova-footer-pro"><div class="nova-footer-intro"><a class="nova-brand" href="#top"><img class="nova-brand-logo" src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a><p>A secure, focused workspace for trading and managing digital assets.</p><span><i class="bi bi-circle-fill"></i> Platform operational</span></div><div class="nova-footer-column"><b>Product</b><a href="#platform">Trading platform</a><a href="#solutions">Solutions</a><a href="#security">Security</a><a href="#how-it-works">How it works</a></div><div class="nova-footer-column"><b>Resources</b><a href="{{ route('blogetc.index') }}">Market news</a><a href="#faq">Help center</a><a href="{{ route('contact') }}">Contact support</a><a href="#stories">Customer stories</a></div><div class="nova-footer-column"><b>Company</b><a href="{{ route('frontend.pages.about') }}">About us</a><a href="{{ route('frontend.pages.about') }}#mission">Our mission</a><a href="{{ route('contact') }}">Partnerships</a><a href="{{ route('contact') }}">Careers</a></div><div class="nova-footer-column"><b>Account</b>@auth<a href="{{ route('user.home') }}">Dashboard</a>@else<a href="{{ route('login') }}">Sign in</a><a href="{{ route('register') }}">Open account</a>@endauth<a href="{{ route('contact') }}">Support</a></div><div class="nova-footer-bottom"><small>© {{ date('Y') }} {{ siteName() }}. All rights reserved.</small><nav><a href="{{ route('frontend.pages.terms') }}">Terms</a>@if(Route::has('policy.show'))<a href="{{ route('policy.show') }}">Privacy</a>@endif<a href="{{ route('contact') }}">Cookie preferences</a></nav><a href="#top">Back to top <i class="bi bi-arrow-up"></i></a></div></footer>
-<script>const toggle=document.querySelector('.nova-menu-toggle');toggle?.addEventListener('click',()=>{const open=document.body.classList.toggle('nova-menu-open');toggle.setAttribute('aria-expanded',open?'true':'false')});</script>
+<script>
+const toggle=document.querySelector('.nova-menu-toggle');
+toggle?.addEventListener('click',()=>{const open=document.body.classList.toggle('nova-menu-open');toggle.setAttribute('aria-expanded',open?'true':'false')});
+(function(){
+    const endpoint=@json(route('market-data.bitcoin'));
+    const price=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2});
+    const refresh=async()=>{
+        try {
+            const response=await fetch(endpoint,{headers:{Accept:'application/json'},cache:'no-store'});
+            if(!response.ok)return;
+            const market=await response.json();
+            if(!market.available)return;
+            document.querySelectorAll('[data-bitcoin-price]').forEach(node=>node.textContent=price.format(market.price));
+            document.querySelectorAll('[data-bitcoin-change]').forEach(node=>{
+                if(market.change_24h===null){node.textContent='';return;}
+                node.textContent=(market.change_24h>=0?'+':'')+market.change_24h.toFixed(2)+'%';
+                node.classList.toggle('is-negative',market.change_24h<0);
+            });
+        } catch (error) {}
+    };
+    refresh();
+    window.setInterval(refresh,60000);
+})();
+</script>
 </body></html>
