@@ -242,3 +242,150 @@ body.vertical-layout .input-group:has(#amount) .input-group-text,
     min-width: 0 !important;
   }
 }
+
+/* Production mobile containment. Legacy wallet, dropdown and auth rules were
+   authored for desktop and can otherwise escape the viewport on real phones. */
+@media (max-width: 767.98px) {
+  html,
+  body.vertical-layout,
+  body.blank-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  body.vertical-layout .header-navbar {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  body.vertical-layout .header-navbar .navbar-container,
+  body.vertical-layout .header-navbar .navbar-nav {
+    min-width: 0 !important;
+  }
+
+  body.vertical-layout .dropdown-user .dropdown-menu.show {
+    position: fixed !important;
+    inset: 82px 12px auto auto !important;
+    width: min(280px, calc(100vw - 24px)) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 10px !important;
+    transform: none !important;
+    z-index: 1090 !important;
+  }
+
+  body.vertical-layout .dropdown-user .dropdown-item,
+  body.vertical-layout .dropdown-user .dropdown-header {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 11px 12px !important;
+    white-space: normal !important;
+    text-decoration: none !important;
+  }
+
+  body.vertical-layout #Wallet,
+  body.vertical-layout #Wallet.collapsing,
+  body.vertical-layout #Wallet.show {
+    position: fixed !important;
+    top: 82px !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - 100px) !important;
+    overflow: auto !important;
+    z-index: 1085 !important;
+    border-radius: 16px !important;
+  }
+
+  body.vertical-layout .modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 12px !important;
+    z-index: 1100 !important;
+  }
+
+  body.vertical-layout .modal-dialog,
+  body.vertical-layout .modal-dialog:has(input[name="amount"]),
+  body.vertical-layout .modal-dialog:has(#amount) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: calc(100dvh - 24px) !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  body.vertical-layout .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  body.blank-page .app-content,
+  body.blank-page .content-wrapper,
+  body.blank-page .content-body,
+  body.blank-page .auth-wrapper,
+  body.blank-page .auth-inner,
+  body.blank-page .auth-inner > .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-inline: 0 !important;
+  }
+
+  body.blank-page .auth-wrapper {
+    padding: 12px !important;
+  }
+
+  body.blank-page .auth-inner > .card .card-body {
+    padding: 24px 20px !important;
+  }
+
+  body.blank-page .auth-register-form .row {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  body.blank-page .auth-register-form [class*="col-"] {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  body.blank-page .auth-register-form .form-label,
+  body.blank-page .auth-register-form .form-check-label {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  body.blank-page .auth-register-form .form-control,
+  body.blank-page .auth-register-form .input-group,
+  body.blank-page .auth-register-form .btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body.blank-page .auth-register-form .input-group {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+  }
+
+  body.blank-page .auth-register-form .input-group .form-control {
+    flex: 1 1 auto !important;
+  }
+
+  body.blank-page .auth-register-form .input-group-text {
+    flex: 0 0 46px !important;
+  }
+}

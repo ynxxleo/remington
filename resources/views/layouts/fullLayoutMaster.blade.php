@@ -23,9 +23,6 @@ data-textdirection="{{ env('MIX_CONTENT_DIRECTION') === 'rtl' ? 'rtl' : 'ltr' }}
   {{-- Include core + vendor Styles --}}
   @include('panels/styles')
 
-  {{-- Include core + vendor Styles --}}
-  @include('panels/styles')
-
 
   <!-- Smartsupp Live Chat script -->
 <script type="text/javascript">

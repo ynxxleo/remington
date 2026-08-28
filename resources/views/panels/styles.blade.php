@@ -46,5 +46,5 @@
 @endif
 
 @livewireStyles
-<link rel="stylesheet" href="{{ asset('css/nova-ui.css') }}" />
-<link rel="stylesheet" href="{{ asset('css/trading-ui.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/nova-ui.css') }}?v={{ filemtime(public_path('css/nova-ui.css')) }}" />
+<link rel="stylesheet" href="{{ asset('css/trading-ui.css') }}?v={{ filemtime(public_path('css/trading-ui.css')) }}" />
