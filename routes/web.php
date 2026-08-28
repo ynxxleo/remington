@@ -40,10 +40,10 @@ Route::get('cron/practice', 'CronController@practiceCron')->name('practice.cron'
 Route::get('cron/schedule', 'CronController@scheduledOrdersCron')->name('schedule.cron');
 Route::get('cron/crypto/price', 'CronController@store')->name('crypt.price');
 if(Extension::where('id',1)->first()->installed == 1){
-    require_once __DIR__ . '/botTrader/cron.php';
+    require __DIR__ . '/botTrader/cron.php';
 }
 if(Extension::where('id',3)->first()->installed == 1){
-    require_once __DIR__ . '/mlm/cron.php';
+    require __DIR__ . '/mlm/cron.php';
 }
 Route::get('/generate-qrcode', [QrCodeController::class, 'index']);
 
@@ -123,8 +123,8 @@ Route::group(['prefix' => config('blogetc.blog_prefix', 'blog'), 'namespace' => 
 
 Route::get('lang/{locale}', 'LanguageController@swap');
 
-require_once __DIR__ . '/jetstream.php';
-require_once __DIR__ . '/fortify.php';
+require __DIR__ . '/jetstream.php';
+require __DIR__ . '/fortify.php';
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
@@ -228,16 +228,16 @@ Route::group(['middleware' => 'auth'], function() {
         });
 
         if(Extension::where('id',1)->first()->installed == 1){
-            require_once __DIR__ . '/botTrader/user.php';
+            require __DIR__ . '/botTrader/user.php';
         }
         if(Extension::where('id',2)->first()->installed == 1){
-            require_once __DIR__ . '/ico/user.php';
+            require __DIR__ . '/ico/user.php';
         }
         if(Extension::where('id',3)->first()->installed == 1){
-            require_once __DIR__ . '/mlm/user.php';
+            require __DIR__ . '/mlm/user.php';
         }
         if(Extension::where('id',4)->first()->installed == 1){
-            require_once __DIR__ . '/forex/user.php';
+            require __DIR__ . '/forex/user.php';
         }
 
         // Exchange
@@ -457,16 +457,16 @@ Route::group(['middleware' => 'auth'], function() {
         Route::post('extensions/activate', [ExtensionController::class, 'activate'])->name('extensions.activate')->middleware('demo');
         Route::post('extensions/deactivate', [ExtensionController::class, 'deactivate'])->name('extensions.deactivate')->middleware('demo');
         if(Extension::where('id',1)->first()->installed == 1){
-            require_once __DIR__ . '/botTrader/admin.php';
+            require __DIR__ . '/botTrader/admin.php';
         }
         if(Extension::where('id',2)->first()->installed == 1){
-            require_once __DIR__ . '/ico/admin.php';
+            require __DIR__ . '/ico/admin.php';
         }
         if(Extension::where('id',3)->first()->installed == 1){
-            require_once __DIR__ . '/mlm/admin.php';
+            require __DIR__ . '/mlm/admin.php';
         }
         if(Extension::where('id',4)->first()->installed == 1){
-            require_once __DIR__ . '/forex/admin.php';
+            require __DIR__ . '/forex/admin.php';
         }
 
         // SEO
