@@ -47,3 +47,40 @@ body.vertical-layout .app-content{padding-bottom:24px!important}
  .vertical-menu-modern.menu-collapsed .nova-user-rail .menu-content{display:none!important}
 }
 @media(min-width:992px) and (max-width:1199px){.fin-top-grid{grid-template-columns:minmax(0,1.6fr) minmax(210px,.92fr) minmax(210px,.92fr)!important}.fin-balance-card{grid-column:auto!important}}
+
+/* Vibrant, accessible actions across the dark-only application UI. */
+.vertical-layout .content-body .btn-primary:not(.btn-danger):not(.btn-success),
+.vertical-layout:not(.dark-layout) .content-body .btn-primary:not(.btn-danger):not(.btn-success){
+ color:#fff!important;
+ border-color:transparent!important;
+ background:linear-gradient(120deg,#216dff 0%,#7357ff 58%,#a74cff 100%)!important;
+ box-shadow:0 12px 28px rgba(92,76,255,.28)!important;
+ transition:transform .2s ease,box-shadow .2s ease,filter .2s ease!important
+}
+.vertical-layout .content-body .btn-success,
+.vertical-layout:not(.dark-layout) .content-body .btn-success{
+ color:#04110c!important;
+ border-color:transparent!important;
+ background:linear-gradient(120deg,#18d98b 0%,#43ecad 58%,#65f5c2 100%)!important;
+ box-shadow:0 12px 28px rgba(32,225,154,.25)!important
+}
+.vertical-layout .content-body .btn-warning,
+.vertical-layout:not(.dark-layout) .content-body .btn-warning{
+ color:#1b0d00!important;
+ border-color:transparent!important;
+ background:linear-gradient(120deg,#ff9f32,#ffca4a)!important;
+ box-shadow:0 12px 28px rgba(255,159,50,.22)!important
+}
+.vertical-layout .content-body .btn-dark{
+ color:#fff!important;
+ border-color:transparent!important;
+ background:linear-gradient(120deg,#ec4899,#9b5cff)!important;
+ box-shadow:0 12px 28px rgba(196,72,199,.24)!important
+}
+.vertical-layout .content-body .btn-primary:hover,
+.vertical-layout .content-body .btn-success:hover,
+.vertical-layout .content-body .btn-warning:hover,
+.vertical-layout .content-body .btn-dark:hover{
+ transform:translateY(-2px)!important;
+ filter:saturate(1.12) brightness(1.05)!important
+}
