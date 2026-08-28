@@ -1,0 +1,1 @@
+!function(t){var a=t(".document-type");0<a.length&&a.on("click",(function(){var a=t(this).data("title"),e=t(".doc-upload-d2"),d=void 0!==t(this).data("change"),i=t(this).data("img");t(".doc-type-name").text(a),t("._image").attr("src",i),0<e.length&&d?e.removeClass("hide"):e.addClass("hide")}))}(jQuery);

@@ -18,6 +18,8 @@
 /public/assets/images/cryptoCurrency/
 /public/data
 /public/fonts
+!/public/fonts/
+!/public/fonts/**
 /public/images
 !/public/images/
 /public/images/*
@@ -25,12 +27,15 @@
 !/public/images/nova/hero-orbit.png
 /public/storage
 /public/js
+!/public/js/
+!/public/js/**
 /public/css
 !/public/css/
 /public/css/*
-!/public/css/nova-ui.css
-!/public/css/trading-ui.css
+!/public/css/**
 /public/vendors
+!/public/vendors/
+!/public/vendors/**
 /storage/*.key
 /storage/logs/*.log
 /storage/logs/*

@@ -389,3 +389,10 @@ body.vertical-layout .input-group:has(#amount) .input-group-text,
     flex: 0 0 46px !important;
   }
 }
+
+/* Dark-only product: theme controls and light artwork are intentionally absent. */
+.trading-theme-toggle,
+.nova-landing-theme,
+.nova-hero-image-light {
+  display: none !important;
+}

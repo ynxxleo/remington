@@ -80,7 +80,6 @@
 
   <ul class="nav navbar-nav align-items-center ms-auto">
 
-      <li class="nav-item"><button class="nova-round-action trading-theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><i class="bi bi-moon-stars"></i></button></li>
       <li class="nav-item d-none d-md-block"><button class="nova-round-action" type="button" aria-label="Search"><i class="bi bi-search"></i></button></li>
       <li class="nav-item d-none d-xl-block"><span class="nova-date-pill"><i class="bi bi-calendar3"></i>{{ now()->format('d M, Y') }}</span></li>
 

@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>document.documentElement.dataset.tradingTheme=localStorage.getItem('trading-theme')||'dark';</script>
+    <script>document.documentElement.dataset.tradingTheme='dark';localStorage.removeItem('trading-theme');</script>
     <title>{{ $page_title }} — {{ siteName() }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -10,7 +10,7 @@
 </head>
 <body class="nova-landing nova-info-page">
 @include('partials.nova-preloader')
-<header class="nova-nav"><a class="nova-brand" href="{{ route('home') }}"><img class="nova-brand-logo" src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a><nav class="nova-nav-links"><a href="{{ route('home') }}#platform">Platform</a><a href="{{ route('home') }}#security">Security</a><a href="{{ route('blogetc.index') }}">Market news</a></nav><div class="nova-nav-actions"><button class="nova-landing-theme" type="button" aria-label="Switch color theme"><i class="bi bi-sun"></i></button><a class="nova-link-button" href="{{ route('login') }}">Sign in</a><a class="nova-button nova-button-sm" href="{{ route('register') }}">Open account</a></div></header>
+<header class="nova-nav"><a class="nova-brand" href="{{ route('home') }}"><img class="nova-brand-logo" src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a><nav class="nova-nav-links"><a href="{{ route('home') }}#platform">Platform</a><a href="{{ route('home') }}#security">Security</a><a href="{{ route('blogetc.index') }}">Market news</a></nav><div class="nova-nav-actions"><a class="nova-link-button" href="{{ route('login') }}">Sign in</a><a class="nova-button nova-button-sm" href="{{ route('register') }}">Open account</a></div></header>
 <main class="nova-info-main">
     @if($pageType === 'about')
         <span class="nova-eyebrow">About {{ siteName() }}</span><h1>Digital markets,<br><span>designed for clarity.</span></h1><p class="nova-info-lead">We bring trading, exchange, wallets and portfolio intelligence into a single secure experience that helps customers stay informed and in control.</p>
@@ -25,5 +25,4 @@
     @endif
 </main>
 <footer class="nova-footer"><a class="nova-brand" href="{{ route('home') }}"><img class="nova-brand-logo" src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a><p>Digital markets, thoughtfully designed.</p><div><a href="{{ route('frontend.pages.about') }}">About</a><a href="{{ route('contact') }}">Support</a><a href="{{ route('frontend.pages.terms') }}">Terms</a>@if(Route::has('policy.show'))<a href="{{ route('policy.show') }}">Privacy</a>@endif</div><small>© {{ date('Y') }} {{ siteName() }}. All rights reserved.</small></footer>
-<script>document.querySelectorAll('.nova-landing-theme').forEach(button=>{const sync=()=>{const dark=document.documentElement.dataset.tradingTheme==='dark';button.innerHTML='<i class="bi bi-'+(dark?'sun':'moon-stars')+'"></i>';button.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode')};button.addEventListener('click',()=>{const next=document.documentElement.dataset.tradingTheme==='dark'?'light':'dark';document.documentElement.dataset.tradingTheme=next;localStorage.setItem('trading-theme',next);sync()});sync()});</script>
 </body></html>
