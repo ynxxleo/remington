@@ -6,6 +6,23 @@ $detect = new Mobile_Detect;
 @section('vendor-style')
   <!-- vendor css files -->
   <link rel="stylesheet" href="{{ asset(mix('vendors/css/forms/spinner/jquery.bootstrap-touchspin.css'))}}">
+    <style>
+        .market-chart-shell {
+            width: 100%;
+            min-height: 620px;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, .16);
+            border-radius: 22px;
+            background: #070d0b;
+        }
+        .market-chart-shell .tradingview-widget-container,
+        .market-chart-shell .tradingview-widget-container__widget { width: 100%; height: 100%; }
+        .market-chart-column { min-width: 0; }
+        @media (max-width: 767px) {
+            .market-chart-shell { min-height: 540px; border-radius: 16px; }
+            .bot-mobile-actions { position: relative !important; inset: auto !important; margin-top: 1rem; }
+        }
+    </style>
     @if( $detect->isMobile() && !$detect->isTablet() )
     <style>
         @media
@@ -39,9 +56,11 @@ $detect = new Mobile_Detect;
     </div>
 </div>
 <div class="row me-1">
-    <div id="appM"></div>
+    <div class="col-12 market-chart-column">
+        <div class="market-chart-shell js-market-chart"></div>
+    </div>
 </div>
-<div class="position-absolute bottom-0 mb-1 w-100">
+<div class="bot-mobile-actions mb-1 w-100">
     <form class="mt-1 text-center" id="botcontract" action="{{ route('user.bot.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" id="bot_id" name="bot_id">
@@ -100,16 +119,9 @@ $detect = new Mobile_Detect;
 </div>
 @else
 <div class="row me-1">
-    @if($crypto == true)
-        <div id="app"></div>
-    @else
-    <div class="flex-start col-10 col-xll-10 col-xl-10 col-lg-10 col-md-9 col-sm-12">
-        <div id="chart-widget"></div>
-        
-        
-        <!--<img src="{{url('/images/aitrading.png')}}"/>-->
+    <div class="flex-start col-10 col-xll-10 col-xl-10 col-lg-10 col-md-9 col-sm-12 market-chart-column">
+        <div class="market-chart-shell js-market-chart"></div>
     </div>
-    @endif
     <div class="flex-end col-2 col-xll-2 col-xl-2 col-lg-2 col-md-3 col-sm-6">
         <div class="mt-5">
             <div class="card mb-1">
@@ -282,45 +294,56 @@ $detect = new Mobile_Detect;
 
 @endsection
 @section('page-script')
-    @if( $detect->isMobile() && !$detect->isTablet() )
-        <script src="{{ asset(mix('js/mainM.js')) }}"></script>
-    @else
-        <script src="{{ asset(mix('js/main.js')) }}"></script>
-    @endif
-        <script src="{{ asset(mix('/vendors/js/amcharts/index.js')) }}"></script>
-        <script src="{{ asset(mix('/vendors/js/amcharts/xy.js')) }}"></script>
-        <script src="{{ asset(mix('/vendors/js/amcharts/Animated.js')) }}"></script>
-        <script src="{{ asset(mix('/vendors/js/amcharts/Dark.js')) }}"></script>
-    @endsection
+@endsection
 @push('script')
-<script type="text/javascript">
-   var container = document.getElementById('chart-widget');
-   window.DXChart.createWidget(container, {
-        "yAxisEnabled": true,
-	"toolbarEnabled": true,
-	"sidebarEnabled": true,
-	"instrumentSuggestEnabled": true,
-	"navigationMapEnabled": false,
-	"xAxisEnabled": true,
-	"height": "584",
-	"width": "1170",
-	"symbol": "{{$symbol}}{{$pair}}".replace("stock",""),
-	"period": "1h",
-	"studies": [
-	  "SlowStochastic",
-	  "BollingerBands",
-	  "MACD",
-	],
-	"chartType": "candle",
-	"chartTheme": "dark",
-	"ipfURL": "https://webdev.prosp.devexperts.com:8095/widget/symbol-suggest/en.txt",
-	"ipfUsername": "test",
-	"ipfPassword": "test",
-	"newsURL": "/news-demo",
-	"newsUsername": "demo",
-	"newsPassword": "demo",
-   });
+@php
+    $chartSymbol = $crypto
+        ? 'BINANCE:' . strtoupper($symbol . $pair)
+        : (strtolower($pair) === 'stock' ? strtoupper($symbol) : 'FX:' . strtoupper($symbol . $pair));
+@endphp
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.js-market-chart').forEach(function (container) {
+            var widget = document.createElement('div');
+            widget.className = 'tradingview-widget-container';
+            widget.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+            container.appendChild(widget);
+
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+            script.async = true;
+            script.textContent = JSON.stringify({
+                autosize: true,
+                symbol: @json($chartSymbol),
+                interval: '15',
+                timezone: 'Etc/UTC',
+                theme: 'dark',
+                backgroundColor: '#070d0b',
+                gridColor: 'rgba(148, 163, 184, 0.08)',
+                style: '1',
+                locale: 'en',
+                allow_symbol_change: true,
+                calendar: false,
+                details: false,
+                hide_side_toolbar: false,
+                hide_top_toolbar: false,
+                hide_legend: false,
+                hide_volume: false,
+                hotlist: false,
+                save_image: false,
+                withdateranges: true,
+                studies: ['STD;MACD']
+            });
+            widget.appendChild(script);
+        });
+
+        $('.se-pre-con').fadeOut('slow');
+    });
 </script>
+{{-- Legacy Binance socket and Devexperts chart code removed: those browser-direct
+     services are region-blocked or retired and left the production chart blank. --}}
+{{--
     <script>
         "use strict";
         $(document).ready(function () {
@@ -817,4 +840,5 @@ $detect = new Mobile_Detect;
             }
         }
     </script>
+--}}
 @endpush

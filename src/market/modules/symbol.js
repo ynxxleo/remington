@@ -12,7 +12,7 @@ export default class Symbol {
     this.name         = ''; // name of token
     this.pair         = ''; // token/market
     this.route        = '/symbol/'+ this.symbol;
-    this.image        = '../../assets/images/cryptoCurrency/default_.png';
+    this.image        = '/assets/images/cryptoCurrency/default_.png';
     this.imageLoaded  = false;
     this.open         = 0;
     this.high         = 0;
@@ -93,7 +93,8 @@ export default class Symbol {
     //img.addEventListener( 'load',  e => { this.imageLoaded = true; this.image = img.src; } );
     //img.addEventListener( 'error', e => { this.imageLoaded = true; } );
     //img.src = '../../assets/images/cryptoCurrency/'+ String( this.token ).toLowerCase() +'_.png';
-    this.imageLoaded = !0, this.image = "../../assets/images/cryptoCurrency/" + String(this.token).toLowerCase() + ".png"
+    this.imageLoaded = true;
+    this.image = "/assets/images/cryptoCurrency/" + String(this.token).toLowerCase() + ".png";
   }
 
   /**
