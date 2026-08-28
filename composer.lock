@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2467892805799f385d671b5a8e5cfbb",
+    "content-hash": "d8f695dcf82aaa359e858787e4eb19ef",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4915,45 +4915,6 @@
                 "source": "https://github.com/sop/crypto-types/tree/master"
             },
             "time": "2019-05-22T12:33:51+00:00"
-        },
-        {
-            "name": "steven-ok/web3.php",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/steven-ok/web3.php.git",
-                "reference": "47143207e56060f4d8f7e0aaa24b2c2a246bfec5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/steven-ok/web3.php/zipball/47143207e56060f4d8f7e0aaa24b2c2a246bfec5",
-                "reference": "47143207e56060f4d8f7e0aaa24b2c2a246bfec5",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "guzzlehttp/guzzle": "^6.0 | ^7.0",
-                "kornrunner/keccak": "~1.0",
-                "phpseclib/phpseclib": "~2.0.11"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Web3\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Ethereum web3 interface.",
-            "support": {
-                "source": "https://github.com/steven-ok/web3.php/tree/1.0.1"
-            },
-            "time": "2021-12-20T06:14:20+00:00"
         },
         {
             "name": "stripe/stripe-php",
