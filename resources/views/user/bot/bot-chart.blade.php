@@ -59,6 +59,37 @@ $detect = new Mobile_Detect;
             background: #e8eeeb !important;
         }
         .market-trade-actions .btn { white-space: normal; }
+        .market-trade-actions #selectBot {
+            min-height: 54px;
+            color: #fff !important;
+            border-color: #7c3aed !important;
+            background: linear-gradient(135deg, #7c3aed, #9b5cff) !important;
+            box-shadow: 0 12px 28px rgba(124, 58, 237, .24);
+        }
+        .market-trade-actions #selectBot:hover,
+        .market-trade-actions #selectBot:focus {
+            border-color: #a978ff !important;
+            background: linear-gradient(135deg, #8b4df0, #ab72ff) !important;
+            transform: translateY(-1px);
+        }
+        .market-trade-actions #botcontract > div:last-child > .btn-success,
+        .market-trade-actions #botcontract button[type="submit"].btn-success {
+            min-height: 58px;
+            color: #04110c !important;
+            border-color: #20e19a !important;
+            background: linear-gradient(135deg, #20e19a, #55efb5) !important;
+            box-shadow: 0 14px 32px rgba(32, 225, 154, .22);
+            font-weight: 750;
+        }
+        .market-trade-actions #botcontract button[type="submit"].btn-success i {
+            color: #08764f !important;
+        }
+        .market-trade-actions #botcontract button[type="submit"].btn-success:hover,
+        .market-trade-actions #botcontract button[type="submit"].btn-success:focus {
+            border-color: #66f2be !important;
+            background: linear-gradient(135deg, #32e5a4, #70f4c4) !important;
+            transform: translateY(-1px);
+        }
         #botTypeModal .modal-content {
             color: #e9f2ed;
             border: 1px solid rgba(148, 163, 184, .2);
