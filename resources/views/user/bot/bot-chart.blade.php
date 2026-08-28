@@ -9,6 +9,7 @@ $detect = new Mobile_Detect;
     <style>
         .market-chart-shell {
             width: 100%;
+            height: clamp(620px, 72vh, 820px);
             min-height: 620px;
             overflow: hidden;
             border: 1px solid rgba(148, 163, 184, .16);
@@ -18,8 +19,33 @@ $detect = new Mobile_Detect;
         .market-chart-shell .tradingview-widget-container,
         .market-chart-shell .tradingview-widget-container__widget { width: 100%; height: 100%; }
         .market-chart-column { min-width: 0; }
+        .market-trade-actions { min-width: 0; color: #e8f0ec; }
+        .market-trade-actions .card {
+            color: #e8f0ec;
+            border-color: rgba(148, 163, 184, .18);
+            background: #0c1512;
+        }
+        .market-trade-actions .form-label,
+        .market-trade-actions small,
+        .market-trade-actions .text-dark { color: #aebbb5 !important; }
+        .market-trade-actions .input-group { width: 100% !important; flex-wrap: nowrap; }
+        .market-trade-actions .form-control {
+            min-width: 0;
+            color: #111916 !important;
+            background: #f4f7f5 !important;
+        }
+        .market-trade-actions .input-group-text {
+            flex: 0 0 auto;
+            color: #111916 !important;
+            background: #e8eeeb !important;
+        }
+        .market-trade-actions .btn { white-space: normal; }
         @media (max-width: 767px) {
-            .market-chart-shell { min-height: 540px; border-radius: 16px; }
+            .market-chart-shell {
+                height: min(68vh, 620px);
+                min-height: 500px;
+                border-radius: 16px;
+            }
             .bot-mobile-actions { position: relative !important; inset: auto !important; margin-top: 1rem; }
         }
     </style>
@@ -60,7 +86,7 @@ $detect = new Mobile_Detect;
         <div class="market-chart-shell js-market-chart"></div>
     </div>
 </div>
-<div class="bot-mobile-actions mb-1 w-100">
+<div class="bot-mobile-actions market-trade-actions mb-1 w-100">
     <form class="mt-1 text-center" id="botcontract" action="{{ route('user.bot.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" id="bot_id" name="bot_id">
@@ -119,10 +145,10 @@ $detect = new Mobile_Detect;
 </div>
 @else
 <div class="row me-1">
-    <div class="flex-start col-10 col-xll-10 col-xl-10 col-lg-10 col-md-9 col-sm-12 market-chart-column">
+    <div class="flex-start col-9 col-xll-9 col-xl-9 col-lg-9 col-md-8 col-sm-12 market-chart-column">
         <div class="market-chart-shell js-market-chart"></div>
     </div>
-    <div class="flex-end col-2 col-xll-2 col-xl-2 col-lg-2 col-md-3 col-sm-6">
+    <div class="flex-end col-3 col-xll-3 col-xl-3 col-lg-3 col-md-4 col-sm-12 market-trade-actions">
         <div class="mt-5">
             <div class="card mb-1">
                 @if($wallet == 'null')
