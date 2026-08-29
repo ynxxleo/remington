@@ -146,7 +146,8 @@ $detect = new Mobile_Detect;
                 position: relative;
                 display: flex;
                 flex-direction: column;
-                width: min(100%, 560px);
+                width: 100%;
+                max-width: none;
                 height: calc(100svh - 122px);
                 min-height: 590px;
                 margin: 0 auto;
@@ -158,7 +159,7 @@ $detect = new Mobile_Detect;
             .market-chart-shell {
                 height: 100%;
                 min-height: 0;
-                border-radius: 20px;
+                border-radius: 16px;
             }
             .native-chart__topbar { align-items: flex-start; padding: 12px; }
             .native-chart__identity { padding-top: 4px; }
@@ -171,7 +172,10 @@ $detect = new Mobile_Detect;
             body.bot-trader-page { overflow: hidden !important; }
             body.bot-trader-page .fin-subpage-head { display: none !important; }
             body.bot-trader-page .app-content { height: 100svh; overflow: hidden !important; padding-bottom: 0 !important; }
-            body.bot-trader-page .content-wrapper { padding: .35rem .75rem 0 !important; }
+            body.bot-trader-page .content-wrapper {
+                padding: .35rem max(4px, env(safe-area-inset-right)) 0 max(4px, env(safe-area-inset-left)) !important;
+            }
+            body.bot-trader-page .content-body { width: 100% !important; max-width: none !important; }
             body.bot-trader-page .footer { display: none !important; }
             .bot-mobile-actions {
                 position: relative !important;
@@ -180,8 +184,8 @@ $detect = new Mobile_Detect;
                 bottom: auto;
                 left: auto;
                 flex: 0 0 auto;
-                width: calc(100% - 24px) !important;
-                margin: -28px auto 8px !important;
+                width: calc(100% - 12px) !important;
+                margin: -24px auto 6px !important;
                 padding: 10px;
                 border: 1px solid rgba(148, 163, 184, .18);
                 border-radius: 20px;
