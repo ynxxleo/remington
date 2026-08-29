@@ -142,10 +142,17 @@ $detect = new Mobile_Detect;
             background: rgba(255, 255, 255, .06);
         }
         @media (max-width: 767px) {
+            .bot-mobile-stage {
+                position: relative;
+                width: min(100%, 560px);
+                height: calc(100svh - 122px);
+                min-height: 590px;
+                margin: 0 auto;
+            }
             .market-chart-shell {
-                height: clamp(350px, calc(100svh - 315px), 560px);
-                min-height: 350px;
-                border-radius: 16px;
+                height: 100%;
+                min-height: 0;
+                border-radius: 20px;
             }
             .native-chart__topbar { align-items: flex-start; padding: 12px; }
             .native-chart__identity { padding-top: 4px; }
@@ -158,12 +165,23 @@ $detect = new Mobile_Detect;
             body.bot-trader-page { overflow: hidden !important; }
             body.bot-trader-page .fin-subpage-head { display: none !important; }
             body.bot-trader-page .app-content { height: 100svh; overflow: hidden !important; padding-bottom: 0 !important; }
-            body.bot-trader-page .content-wrapper { padding: .5rem .75rem 0 !important; }
-            body.bot-trader-page .content-body > .row { width: min(100%, 560px); margin: 0 auto !important; }
+            body.bot-trader-page .content-wrapper { padding: .35rem .75rem 0 !important; }
             body.bot-trader-page .footer { display: none !important; }
             .bot-mobile-actions {
-                position: relative !important; inset: auto !important;
-                width: min(100%, 560px) !important; margin: .55rem auto 0 !important;
+                position: absolute !important;
+                z-index: 8;
+                right: 12px;
+                bottom: 12px;
+                left: 12px;
+                width: auto !important;
+                margin: 0 !important;
+                padding: 10px;
+                border: 1px solid rgba(148, 163, 184, .18);
+                border-radius: 20px;
+                background: rgba(7, 13, 11, .86);
+                box-shadow: 0 20px 55px rgba(0, 0, 0, .46);
+                backdrop-filter: blur(18px) saturate(130%);
+                -webkit-backdrop-filter: blur(18px) saturate(130%);
             }
             .bot-mobile-actions #botcontract { margin-top: 0 !important; }
             .bot-mobile-actions #botcontract .mx-1 { margin-inline: 0 !important; }
@@ -173,6 +191,8 @@ $detect = new Mobile_Detect;
             .bot-mobile-actions .input-group .form-control,
             .bot-mobile-actions .input-group .input-group-text { min-height: 46px !important; }
             .bot-mobile-actions #botcontract button[type="submit"].btn-success { min-height: 48px; }
+            .bot-mobile-actions .row { --bs-gutter-x: .55rem; }
+            .native-chart__footer { display: none; }
         }
     </style>
     @if( $detect->isMobile() && !$detect->isTablet() )
@@ -208,12 +228,11 @@ $detect = new Mobile_Detect;
         <span>{{ __('locale.Please turn your device in portrait mode.')}}</span>
     </div>
 </div>
-<div class="row me-1">
-    <div class="col-12 market-chart-column">
+<div class="bot-mobile-stage">
+    <div class="market-chart-column h-100">
         <div class="market-chart-shell js-market-chart"></div>
     </div>
-</div>
-<div class="bot-mobile-actions market-trade-actions mb-1 w-100">
+    <div class="bot-mobile-actions market-trade-actions w-100">
     <form class="mt-1 text-center" id="botcontract" action="{{ route('user.bot.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" id="bot_id" name="bot_id">
@@ -269,6 +288,7 @@ $detect = new Mobile_Detect;
             </button>
         </div>
     </form>
+    </div>
 </div>
 @else
 <div class="row me-1">
