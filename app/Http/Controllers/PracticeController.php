@@ -245,13 +245,11 @@ class PracticeController extends Controller
         $user = Auth::user();
         $page_title = "Practice Trade History";
         $empty_message = "No Data Found";
-        $contracts = PracticeLog::where('user_id', $user->id)->latest()->paginate(getPaginate());
-        if (!file_exists(public_path('data/practice/u00'.$user->id.'.json'))) {
-            $json_data = '{"'.$user->id.'": {"1": []}}';
-            file_put_contents(public_path('data/practice/u00'.$user->id.'.json'), $json_data);
-        }
-        $jsonString = file_get_contents(public_path('data/practice/u00'.$user->id.'.json'));
-        $datas = json_decode($jsonString, true);
+        $contracts = PracticeLog::with('crypto')->where('user_id', $user->id)->latest()->paginate(getPaginate());
+        $dataFile = public_path('data/practice/u00'.$user->id.'.json');
+        $datas = is_readable($dataFile)
+            ? (json_decode(file_get_contents($dataFile), true) ?: [])
+            : [];
         return view('user.contract.log', compact('page_title', 'empty_message','contracts','user','datas'));
     }
     public function practiceLogChart($tradeLogId)

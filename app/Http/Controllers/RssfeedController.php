@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\rssfeed;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class RssfeedController extends Controller
 {
@@ -15,20 +16,28 @@ class RssfeedController extends Controller
     public function index()
     {
         $page_title = 'News';
-        $urls = rssfeed::pluck('url')->toArray();
+        $feeds = null;
+        $invalidurl = false;
 
-        $url = "https://cointelegraph.com/feed"; //https://blog.feedspot.com/cryptocurrency_rss_feeds/
+        try {
+            $response = Http::timeout(8)
+                ->retry(1, 250)
+                ->withHeaders(['User-Agent' => config('app.name', 'Remington').' News Reader'])
+                ->get('https://cointelegraph.com/feed');
 
-        //foreach ($urls as $url) {
-            $invalidurl = false;
-            if(@simplexml_load_file($url)){
-                $feeds = simplexml_load_file($url,'SimpleXMLElement', LIBXML_NOCDATA);
-                //dd($feeds);
-            }else{
-                $invalidurl = true;
-                return view('errors.404');
+            if ($response->successful() && function_exists('simplexml_load_string')) {
+                $feeds = @simplexml_load_string(
+                    $response->body(),
+                    'SimpleXMLElement',
+                    LIBXML_NOCDATA
+                );
             }
-        //}
+
+            $invalidurl = $feeds === false || $feeds === null;
+        } catch (\Throwable $exception) {
+            report($exception);
+            $invalidurl = true;
+        }
 
         return view('user.news.news',compact('page_title','feeds','invalidurl'));
     }

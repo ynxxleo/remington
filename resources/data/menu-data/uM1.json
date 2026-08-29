@@ -71,13 +71,6 @@
             "slug": "user-wallets"
         },
         {
-            "url": "https://nft.soleracapitals.com/wallet-connect/",
-            "name": "Wallet Connect",
-            "icon": "wallet2",
-            "slug": "wallet-connect"
-        },
-
-        {
             "name": "Transactions",
             "icon": "briefcase",
             "slug": "",

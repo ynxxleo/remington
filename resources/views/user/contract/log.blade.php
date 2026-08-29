@@ -26,8 +26,8 @@
                         @forelse($contracts as $contract)
                             <tr>
                                 <td data-label="@lang("Id")">{{$loop->iteration}}</td>
-                                <td data-label="@lang("Crypto Currency")">{{__($contract->crypto->name)}}</td>
-                                <td data-label="@lang("Crypto Symbol")">{{__($contract->crypto->symbol)}}</td>
+                                <td data-label="@lang("Crypto Currency")">{{ optional($contract->crypto)->name ?? __('locale.Unavailable') }}</td>
+                                <td data-label="@lang("Crypto Symbol")">{{ optional($contract->crypto)->symbol ?? '—' }}</td>
                                 <td data-label="@lang("Amount")">{{getAmount($contract->amount)}} {{$contract->pair}}</td>
                                 <td data-label="@lang("High/Low")">
                                     @if($contract->hilow == 1)

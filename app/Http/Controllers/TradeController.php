@@ -402,13 +402,11 @@ class TradeController extends Controller
 
         $page_title = "Trade History";
         $empty_message = "No Data Found";
-        $contracts = TradeLog::where('user_id', $user->id)->latest()->paginate(getPaginate());
-        if (!file_exists(public_path('data/trade/u00'.$user->id.'.json'))) {
-            $json_data = '{"'.$user->id.'": {"1": []}}';
-            file_put_contents(public_path('data/trade/u00'.$user->id.'.json'), $json_data);
-        }
-        $jsonString = file_get_contents(public_path('data/trade/u00'.$user->id.'.json'));
-        $datas = json_decode($jsonString, true);
+        $contracts = TradeLog::with('crypto')->where('user_id', $user->id)->latest()->paginate(getPaginate());
+        $dataFile = public_path('data/trade/u00'.$user->id.'.json');
+        $datas = is_readable($dataFile)
+            ? (json_decode(file_get_contents($dataFile), true) ?: [])
+            : [];
         return view('user.contract.log', compact('page_title', 'empty_message','contracts','user','datas'));
     }
 

@@ -82,9 +82,10 @@
     $i++;
     }
     }else {
-        if (!$invalidurl) {
-            echo "<h2>No item found</h2>";
-        }
+        echo '<div class="col-12"><div class="card"><div class="card-body text-center py-5">';
+        echo '<h3>Market news is temporarily unavailable</h3>';
+        echo '<p class="text-muted mb-0">Please try again in a few minutes.</p>';
+        echo '</div></div></div>';
     }
     ?>
 
