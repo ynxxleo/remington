@@ -135,8 +135,8 @@ $detect = new Mobile_Detect;
         }
         @media (max-width: 767px) {
             .market-chart-shell {
-                height: 650px;
-                min-height: 650px;
+                height: clamp(350px, calc(100svh - 315px), 560px);
+                min-height: 350px;
                 border-radius: 16px;
             }
             .native-chart__topbar { align-items: flex-start; padding: 12px; }
@@ -145,8 +145,26 @@ $detect = new Mobile_Detect;
             .native-chart__intervals { max-width: 58%; overflow-x: auto; }
             .native-chart__interval { padding: 7px 9px; }
             .native-chart__body { padding-inline: 0; }
-            .native-chart__main { min-height: 340px; }
-            .bot-mobile-actions { position: relative !important; inset: auto !important; margin-top: 1rem; }
+            .native-chart__main { min-height: 0; height: 68%; }
+            .native-chart__indicator { min-height: 88px; height: 30%; }
+            body.bot-trader-page { overflow: hidden !important; }
+            body.bot-trader-page .fin-subpage-head { display: none !important; }
+            body.bot-trader-page .app-content { height: 100svh; overflow: hidden !important; padding-bottom: 0 !important; }
+            body.bot-trader-page .content-wrapper { padding: .5rem .75rem 0 !important; }
+            body.bot-trader-page .content-body > .row { width: min(100%, 560px); margin: 0 auto !important; }
+            body.bot-trader-page .footer { display: none !important; }
+            .bot-mobile-actions {
+                position: relative !important; inset: auto !important;
+                width: min(100%, 560px) !important; margin: .55rem auto 0 !important;
+            }
+            .bot-mobile-actions #botcontract { margin-top: 0 !important; }
+            .bot-mobile-actions #botcontract .mx-1 { margin-inline: 0 !important; }
+            .bot-mobile-actions #botcontract .mb-1 { margin-bottom: .5rem !important; }
+            .bot-mobile-actions #selectBot,
+            .bot-mobile-actions #botTimed { min-height: 44px; }
+            .bot-mobile-actions .input-group .form-control,
+            .bot-mobile-actions .input-group .input-group-text { min-height: 46px !important; }
+            .bot-mobile-actions #botcontract button[type="submit"].btn-success { min-height: 48px; }
         }
     </style>
     @if( $detect->isMobile() && !$detect->isTablet() )
@@ -168,6 +186,7 @@ $detect = new Mobile_Detect;
     @endif
 @endsection
 @section('content')
+<script>document.body.classList.add('bot-trader-page');</script>
 <div class="se-pre-con">
     <div class="se-pre-con2 spinner-border text-primary" role="status">
         <span class="sr-only"></span>
