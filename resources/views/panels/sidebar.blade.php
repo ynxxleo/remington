@@ -9,7 +9,7 @@ $configData = applClasses();
           <span class="brand-logo">
             <img src="{{getImage(imagePath()['logoIcon']['path'] .'/favicon.png')}}" alt="{{ __('locale.image')}}">
           </span>
-          <div class="brand-text"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" alt="{{ __('locale.image')}}"></div>
+          <span class="brand-text nova-sidebar-name">{{ siteName() }}</span>
         </a>
       </li>
       <li class="nav-item nav-toggle">

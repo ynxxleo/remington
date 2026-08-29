@@ -84,3 +84,9 @@ body.vertical-layout .app-content{padding-bottom:24px!important}
  transform:translateY(-2px)!important;
  filter:saturate(1.12) brightness(1.05)!important
 }
+.nova-loader-brand{display:flex;align-items:center;justify-content:center;gap:14px;max-width:min(86vw,420px)}
+.nova-loader-brand img{width:58px;height:58px;flex:0 0 58px;object-fit:contain;border-radius:17px;background:#19ed8a;padding:6px;box-shadow:0 14px 36px rgba(25,237,138,.2)}
+.nova-loader-brand span{max-width:310px;overflow:hidden;color:#f8fafc;font-family:'Manrope','DM Sans',sans-serif;font-size:clamp(1.15rem,4vw,1.55rem);font-weight:800;letter-spacing:-.035em;line-height:1.1;text-overflow:ellipsis;white-space:nowrap}
+.nova-preloader .nova-loader-track{width:min(230px,64vw);height:3px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.08)}
+.nova-preloader .nova-loader-track i{display:block;width:42%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#19ed8a,#48d7ff);animation:nova-loader-slide 1.05s ease-in-out infinite}
+@keyframes nova-loader-slide{0%{transform:translateX(-115%)}100%{transform:translateX(340%)}}
