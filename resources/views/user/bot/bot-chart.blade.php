@@ -125,6 +125,14 @@ $detect = new Mobile_Detect;
         #botTypeModal .bg-wallet .fw-bold { color: #f5faf7 !important; }
         #botTypeModal .bg-wallet .text-warning { color: #ffad55 !important; }
         #botTypeModal .bg-wallet .text-success { color: #20e19a !important; }
+        #botTypeModal .bot-new-badge {
+            color: #032b1d !important;
+            background: #20e19a !important;
+            border: 1px solid #69f2c0;
+            box-shadow: 0 5px 14px rgba(32, 225, 154, .24);
+            font-weight: 800;
+            letter-spacing: .02em;
+        }
         #botTypeModal .bg-wallet img {
             width: 100%;
             max-width: 96px;
@@ -417,7 +425,7 @@ $detect = new Mobile_Detect;
                         <div class="col-9">
                             <div class="d-flex justify-content-between">
                                 <div class="fw-bold fs-4 text-white">{{ $bot->title }} @if ($bot->is_new == 1)<span
-                                        class="fs-6 badge bg-success text-white">{{ __('locale.New')}}</span>@endif
+                                        class="fs-6 badge bot-new-badge">{{ __('locale.New')}}</span>@endif
                                 </div>
                                 <div class="fs-6 text-white d-none d-md-block"><i class="bi bi-app-indicator"></i>
                                     {{ number_format($bot->fake) }}</div>
