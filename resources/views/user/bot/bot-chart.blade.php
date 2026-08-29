@@ -509,12 +509,25 @@ $detect = new Mobile_Detect;
             if (!candles.length) throw new Error('No candle data was returned.');
             if (candleChart) candleChart.destroy(); if (macdChart) macdChart.destroy();
             var baseChart = { foreColor: '#819089', fontFamily: 'inherit', animations: { enabled: false }, toolbar: { show: false }, zoom: { enabled: true, type: 'x', autoScaleYaxis: true }, background: 'transparent' };
+            var visibleFrom = candles[Math.max(0, candles.length - 60)].time;
             candleChart = new ApexCharts(container.querySelector('.native-chart__main'), {
-                chart: Object.assign({ type: 'candlestick', height: '100%' }, baseChart),
-                series: [{ name: 'Price', type: 'candlestick', data: candles.map(function (bar) { return { x: bar.time, y: [bar.open, bar.high, bar.low, bar.close] }; }) }, { name: 'Volume', type: 'bar', data: candles.map(function (bar) { return { x: bar.time, y: bar.volume, fillColor: bar.close >= bar.open ? 'rgba(32,225,154,.22)' : 'rgba(255,82,99,.22)' }; }) }],
-                plotOptions: { candlestick: { colors: { upward: '#20e19a', downward: '#ff5263' }, wick: { useFillColor: true } }, bar: { columnWidth: '78%' } }, stroke: { width: [1, 0] },
-                grid: { borderColor: 'rgba(148,163,184,.09)', strokeDashArray: 2 }, xaxis: { type: 'datetime', labels: { datetimeUTC: true }, axisBorder: { color: 'rgba(148,163,184,.16)' } },
-                yaxis: [{ opposite: true, decimalsInFloat: 5, tooltip: { enabled: true } }, { show: false, seriesName: 'Volume' }], tooltip: { theme: 'dark', shared: true }, legend: { show: false }
+                chart: Object.assign({}, baseChart, {
+                    type: 'candlestick',
+                    height: '100%',
+                    toolbar: {
+                        show: true,
+                        offsetY: 2,
+                        tools: { download: false, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true },
+                        autoSelected: 'zoom'
+                    }
+                }),
+                series: [{ name: 'Price', data: candles.map(function (bar) { return { x: bar.time, y: [bar.open, bar.high, bar.low, bar.close] }; }) }],
+                plotOptions: { candlestick: { colors: { upward: '#20e19a', downward: '#ff5263' }, wick: { useFillColor: true } } },
+                stroke: { width: 1 },
+                grid: { borderColor: 'rgba(148,163,184,.09)', strokeDashArray: 2 },
+                xaxis: { type: 'datetime', min: visibleFrom, labels: { datetimeUTC: true }, axisBorder: { color: 'rgba(148,163,184,.16)' } },
+                yaxis: { opposite: true, decimalsInFloat: 5, forceNiceScale: false, tooltip: { enabled: true } },
+                tooltip: { theme: 'dark', shared: false }, legend: { show: false }
             });
             var macd = macdSeries(candles);
             macdChart = new ApexCharts(container.querySelector('.native-chart__indicator'), {
