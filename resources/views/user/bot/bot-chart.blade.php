@@ -146,11 +146,11 @@ $detect = new Mobile_Detect;
                 position: relative;
                 display: flex;
                 flex-direction: column;
-                width: 100%;
+                width: 100vw;
                 max-width: none;
                 height: calc(100svh - 122px);
                 min-height: 590px;
-                margin: 0 auto;
+                margin: 0 0 0 calc(50% - 50vw);
             }
             .bot-mobile-stage .market-chart-column {
                 flex: 1 1 auto;
@@ -159,7 +159,9 @@ $detect = new Mobile_Detect;
             .market-chart-shell {
                 height: 100%;
                 min-height: 0;
-                border-radius: 16px;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
             }
             .native-chart__topbar { align-items: flex-start; padding: 12px; }
             .native-chart__identity { padding-top: 4px; }
@@ -173,7 +175,7 @@ $detect = new Mobile_Detect;
             body.bot-trader-page .fin-subpage-head { display: none !important; }
             body.bot-trader-page .app-content { height: 100svh; overflow: hidden !important; padding-bottom: 0 !important; }
             body.bot-trader-page .content-wrapper {
-                padding: .35rem max(4px, env(safe-area-inset-right)) 0 max(4px, env(safe-area-inset-left)) !important;
+                padding: .35rem 0 0 !important;
             }
             body.bot-trader-page .content-body { width: 100% !important; max-width: none !important; }
             body.bot-trader-page .footer { display: none !important; }
@@ -184,11 +186,12 @@ $detect = new Mobile_Detect;
                 bottom: auto;
                 left: auto;
                 flex: 0 0 auto;
-                width: calc(100% - 12px) !important;
-                margin: -24px auto 6px !important;
+                width: 100% !important;
+                margin: -24px 0 0 !important;
                 padding: 10px;
-                border: 1px solid rgba(148, 163, 184, .18);
-                border-radius: 20px;
+                border: 0;
+                border-top: 1px solid rgba(148, 163, 184, .18);
+                border-radius: 18px 18px 0 0;
                 background: rgba(7, 13, 11, .86);
                 box-shadow: 0 20px 55px rgba(0, 0, 0, .46);
                 backdrop-filter: blur(18px) saturate(130%);
