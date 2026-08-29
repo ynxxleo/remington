@@ -4,7 +4,7 @@
         <div class="row justify-content-between">
             <div class="col-lg-3 col-md-6 wow fadeInDown" data-wow-duration="0.3s" data-wow-delay="0.3s">
                 <div class="footer-box">
-                    <div class="logo"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}"></div>
+                    <div class="logo">@include('partials.site-wordmark')</div>
                     <p class="text">{{ $sections[10]->content->text1 }}</p>
                 </div>
             </div>

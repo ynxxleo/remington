@@ -34,8 +34,7 @@ $detect = new Mobile_Detect;
 @if( $detect->isMobile() && !$detect->isTablet() )
     <div class="responsive-portrait ov-nblr">
         <div>
-            <div class="brand-text"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}"
-                    alt="{{ __('locale.image')}}"></div>
+            <div class="brand-text">@include('partials.site-wordmark')</div>
             <span>Please turn your device in portrait mode.</span>
         </div>
     </div>

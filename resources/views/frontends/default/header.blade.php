@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark ">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img style="max-height: 50px" src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" class="logo">
+                @include('partials.site-wordmark')
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"

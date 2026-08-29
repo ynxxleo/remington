@@ -7,13 +7,13 @@
     </button>
 
     <a href="#main" class="navbar-brand">
-        <img src="{{ asset('img/logo.png') }}" alt="{{ appName() }}" class="logo logo-sticky">
+        @include('partials.site-wordmark')
     </a>
 
     <div class="collapse navbar-collapse ms-auto">
         <div class="sidebar-brand">
             <a href="#main">
-                <img src="{{ asset('img/logo.png') }}" alt="{{ appName() }}" class="logo">
+                @include('partials.site-wordmark')
             </a>
         </div>
 

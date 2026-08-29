@@ -6,7 +6,7 @@
     <link rel="shortcut icon" href="{{ getImage(imagePath()['logoIcon']['path'] .'/favicon.png') }}" type="image/x-icon">
 
     {{--<!-- Apple Stuff -->--}}
-    <link rel="apple-touch-icon" href="{{ getImage(imagePath()['logoIcon']['path'] .'/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ getImage(imagePath()['logoIcon']['path'] .'/favicon.png') }}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="{{ $general->sitename($page_title) }}">

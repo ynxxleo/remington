@@ -1,8 +1,5 @@
 <div class="nova-preloader" id="nova-preloader" role="status" aria-label="Loading page">
-    <div class="nova-loader-brand">
-        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/favicon.png') }}" alt="{{ siteName() }} icon">
-        <span>{{ siteName() }}</span>
-    </div>
+    <div class="nova-loader-brand">@include('partials.site-wordmark')</div>
     <div class="nova-loader-track" aria-hidden="true"><i></i></div>
     <small>Loading workspace</small>
 </div>

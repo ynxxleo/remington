@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-duration="0.2s" data-wow-delay="0.2s">
                 <div class="footer-box">
-                    <div class="logo"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}"></div>
+                    <div class="logo">@include('partials.site-wordmark')</div>
                     <p class="text">{{ $sections[9]->content->text1 }}</p>
                 </div>
             </div>

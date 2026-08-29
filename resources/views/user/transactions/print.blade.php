@@ -16,7 +16,7 @@
               <!-- Header starts -->
               <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
                 <div>
-                <div class="brand-text mb-1"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" alt="{{ __('locale.image')}}"></div>
+                <div class="brand-text mb-1">@include('partials.site-wordmark')</div>
                   {{-- <p class="card-text mb-25">Office 149, 450 South Brand Brooklyn</p>
                   <p class="card-text mb-25">San Diego County, CA 91905, USA</p>
                   <p class="card-text mb-0">+1 (123) 456 7891, +44 (876) 543 2198</p> --}}

@@ -10,13 +10,13 @@
         </button>
 
         <x-utils.link href="#main" class="navbar-brand">
-            <img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" class="logo logo-sticky">
+            @include('partials.site-wordmark')
         </x-utils.link>
 
         <div class="collapse navbar-collapse ms-auto" id="main-navbar">
             <div class="sidebar-brand">
                 <x-utils.link :href="route('home')">
-                    <img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" class="logo">
+                    @include('partials.site-wordmark')
                 </x-utils.link>
             </div>
 

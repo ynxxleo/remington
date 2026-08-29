@@ -10,7 +10,7 @@
         </div>
 
         <div class="col-md-2 text-center">
-            <img src="{{ asset('img/logo.png') }}" alt="" class="logo">
+            @include('partials.site-wordmark')
         </div>
 
         <div class="col-md-5 text-center text-md-right">

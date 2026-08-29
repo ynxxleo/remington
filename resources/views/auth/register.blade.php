@@ -23,7 +23,7 @@
           <!-- Register Basic -->
           <div class="card mb-0">
               <div class="card-body">
-                  <a href="{{ route('home') }}" class="nova-auth-brand"><img src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a>
+                  <a href="{{ route('home') }}" class="nova-auth-brand" aria-label="{{ siteName() }} home">@include('partials.site-wordmark')</a>
                   <div class="nova-auth-kicker mb-1">Your trading workspace</div>
                   <h4 class="card-title mb-1">Create your account</h4>
                   <p class="card-text mb-2">Set up secure access to trading, exchange and portfolio tools.</p>

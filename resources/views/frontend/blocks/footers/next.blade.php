@@ -14,7 +14,7 @@
     <div class="container {{ $containerClass ?? '' }}">
         <div class="row gap-y">
             <div class="col-md-4">
-                <img src="{{ asset('img/logo.png') }}" alt="" class="logo">
+                @include('partials.site-wordmark')
 
                 <nav class="nav mt-4">
                     <a href="#" class="@rtl ms-3 @else me-3 @endrtl">@Lang('About us')</a>

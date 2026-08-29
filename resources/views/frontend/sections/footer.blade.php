@@ -5,7 +5,7 @@
 <x-utils.container tag="footer" class="site-footer {{ $class ?? '' }}" container-class="{{ $containerClass ?? '' }}">
     <div class="row gap-y text-center @rtl text-md-end @else text-md-start @endrtl">
         <div class="col-md-4 @rtl ms-auto @else me-auto @endrtl">
-            <img style="max-height:40px;" src="{{getImage(imagePath()['logoIcon']['path'] .'/favicon.png')}}" alt="favicon"><img src="{{getImage(imagePath()['logoIcon']['path'] .'/logo.png')}}" alt="" class="logo">
+            @include('partials.site-wordmark')
 
             <p>{!! siteName() !!}, {{ $footer_section['0'] }}</p>
         </div>

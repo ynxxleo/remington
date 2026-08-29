@@ -83,7 +83,7 @@ class GeneralSettingController extends Controller
 
     public function logoIcon()
     {
-        $page_title = 'Logo & Icon';
+        $page_title = 'Brand Icon';
         return view('admin.setting.logo_icon', compact('page_title'));
     }
 

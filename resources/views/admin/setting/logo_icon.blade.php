@@ -6,31 +6,8 @@
             <div class="card-body">
                 <form action="{{ route('admin.setting.logo_icon_update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-1">
-                            <div id="logoPreviewLight" class="img-fluid logoPrev"
-                                style="height:80px;background-size: cover;background-image: url({{ getImage(imagePath()['logoIcon']['path'].'/logo.png', '?'.time()) }})">
-                                <button type="button" class="btn-icon btn-danger rounded"><i
-                                        class="bi bi-x"></i></button>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-1">
-                            <div id="logoPreviewDark" class="img-fluid bg-dark logoPrev"
-                                style="height:80px;background-size: cover;background-image: url({{ getImage(imagePath()['logoIcon']['path'].'/logo.png', '?'.time()) }})">
-                                <button type="button" class="btn-icon btn-danger rounded"><i
-                                        class="bi bi-x"></i></button>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="input-group input-group-merge">
-                                <input class="form-control" type="file" id="profilePicUpload1"
-                                    accept=".png, .jpg, .jpeg" name="logo">
-                                <label class="input-group-text"
-                                    for="profilePicUpload1">{{ __('locale.Select Logo')}}</label>
-                            </div>
-                        </div>
-                        <small class="ms-1 text-danger"><code>350px x 75px</code></small>
-                    </div>
+                    <h4 class="mb-1">Site icon</h4>
+                    <p class="text-muted mb-2">The site name is displayed automatically beside this icon across the interface.</p>
                     <div class="row mb-2">
                         <div class="col-md-6 mb-1">
                             <div id="faviconPreviewLight" class="img-fluid iconPrev"
@@ -51,7 +28,7 @@
                                 <input class="form-control" type="file" id="profilePicUpload2" accept=".png"
                                     name="favicon">
                                 <label for="profilePicUpload2"
-                                    class="input-group-text">{{ __('locale.Select Favicon')}}</label>
+                                    class="input-group-text">Select site icon</label>
                             </div>
                         </div>
                         <small class="ms-1 text-danger"><code>64px x 64px</code></small>
@@ -66,9 +43,6 @@
 
 @push('style')
 <style type="text/css">
-    .logoPrev{
-        background-size: 100%;
-    }
     .iconPrev{
         background-size: 100%;
     }
@@ -91,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-    preview('profilePicUpload1', ['logoPreviewLight', 'logoPreviewDark']);
     preview('profilePicUpload2', ['faviconPreviewLight', 'faviconPreviewDark']);
 });
 </script>

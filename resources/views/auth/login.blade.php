@@ -17,7 +17,7 @@
       <!-- Login basic -->
       <div class="card mb-0">
         <div class="card-body">
-            <a href="{{ route('home') }}" class="nova-auth-brand"><img src="{{ getImage(imagePath()['logoIcon']['path'].'/logo.png') }}" alt="{{ siteName() }}"></a>
+            <a href="{{ route('home') }}" class="nova-auth-brand" aria-label="{{ siteName() }} home">@include('partials.site-wordmark')</a>
           <div class="nova-auth-kicker mb-1">Secure account access</div>
           <h4 class="card-title mb-1">Welcome back</h4>
           <p class="card-text mb-2">Sign in to access your portfolio and trading workspace.</p>
