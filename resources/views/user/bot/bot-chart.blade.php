@@ -144,10 +144,16 @@ $detect = new Mobile_Detect;
         @media (max-width: 767px) {
             .bot-mobile-stage {
                 position: relative;
+                display: flex;
+                flex-direction: column;
                 width: min(100%, 560px);
                 height: calc(100svh - 122px);
                 min-height: 590px;
                 margin: 0 auto;
+            }
+            .bot-mobile-stage .market-chart-column {
+                flex: 1 1 auto;
+                min-height: 0;
             }
             .market-chart-shell {
                 height: 100%;
@@ -168,13 +174,14 @@ $detect = new Mobile_Detect;
             body.bot-trader-page .content-wrapper { padding: .35rem .75rem 0 !important; }
             body.bot-trader-page .footer { display: none !important; }
             .bot-mobile-actions {
-                position: absolute !important;
+                position: relative !important;
                 z-index: 8;
-                right: 12px;
-                bottom: 12px;
-                left: 12px;
-                width: auto !important;
-                margin: 0 !important;
+                right: auto;
+                bottom: auto;
+                left: auto;
+                flex: 0 0 auto;
+                width: calc(100% - 24px) !important;
+                margin: -28px auto 8px !important;
                 padding: 10px;
                 border: 1px solid rgba(148, 163, 184, .18);
                 border-radius: 20px;
@@ -193,6 +200,25 @@ $detect = new Mobile_Detect;
             .bot-mobile-actions #botcontract button[type="submit"].btn-success { min-height: 48px; }
             .bot-mobile-actions .row { --bs-gutter-x: .55rem; }
             .native-chart__footer { display: none; }
+            .native-chart__main .apexcharts-toolbar {
+                top: 8px !important;
+                right: 12px !important;
+                width: auto !important;
+                max-width: none !important;
+                gap: 4px;
+                padding: 4px !important;
+                border: 1px solid rgba(148, 163, 184, .16);
+                border-radius: 10px;
+                background: rgba(7, 13, 11, .82);
+                backdrop-filter: blur(10px);
+            }
+            .native-chart__main .apexcharts-toolbar > div {
+                width: 25px !important;
+                height: 25px !important;
+                margin: 0 !important;
+                display: grid;
+                place-items: center;
+            }
         }
     </style>
     @if( $detect->isMobile() && !$detect->isTablet() )
@@ -529,7 +555,11 @@ $detect = new Mobile_Detect;
             if (!candles.length) throw new Error('No candle data was returned.');
             if (candleChart) candleChart.destroy(); if (macdChart) macdChart.destroy();
             var baseChart = { foreColor: '#819089', fontFamily: 'inherit', animations: { enabled: false }, toolbar: { show: false }, zoom: { enabled: true, type: 'x', autoScaleYaxis: true }, background: 'transparent' };
-            var visibleFrom = candles[Math.max(0, candles.length - 60)].time;
+            var visibleCandles = candles.slice(-60);
+            var visibleFrom = visibleCandles[0].time;
+            var visibleLow = Math.min.apply(null, visibleCandles.map(function (bar) { return bar.low; }));
+            var visibleHigh = Math.max.apply(null, visibleCandles.map(function (bar) { return bar.high; }));
+            var visiblePadding = Math.max((visibleHigh - visibleLow) * 0.1, Math.abs(visibleHigh) * 0.00015);
             candleChart = new ApexCharts(container.querySelector('.native-chart__main'), {
                 chart: Object.assign({}, baseChart, {
                     type: 'candlestick',
@@ -537,7 +567,7 @@ $detect = new Mobile_Detect;
                     toolbar: {
                         show: true,
                         offsetY: 2,
-                        tools: { download: false, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true },
+                        tools: { download: false, selection: false, zoom: true, zoomin: true, zoomout: true, pan: false, reset: true },
                         autoSelected: 'zoom'
                     }
                 }),
@@ -546,7 +576,7 @@ $detect = new Mobile_Detect;
                 stroke: { width: 1 },
                 grid: { borderColor: 'rgba(148,163,184,.09)', strokeDashArray: 2 },
                 xaxis: { type: 'datetime', min: visibleFrom, labels: { datetimeUTC: true }, axisBorder: { color: 'rgba(148,163,184,.16)' } },
-                yaxis: { opposite: true, decimalsInFloat: 5, forceNiceScale: false, tooltip: { enabled: true } },
+                yaxis: { opposite: true, min: visibleLow - visiblePadding, max: visibleHigh + visiblePadding, decimalsInFloat: 5, forceNiceScale: false, tooltip: { enabled: true } },
                 tooltip: { theme: 'dark', shared: false }, legend: { show: false }
             });
             var macd = macdSeries(candles);
@@ -555,7 +585,10 @@ $detect = new Mobile_Detect;
                 colors: ['#42a5ff', '#ff9f43', '#20e19a'], stroke: { width: [2, 2, 0], curve: 'smooth' }, plotOptions: { bar: { columnWidth: '76%' } },
                 grid: { borderColor: 'rgba(148,163,184,.08)', strokeDashArray: 2 }, xaxis: { type: 'datetime', labels: { datetimeUTC: true }, axisBorder: { color: 'rgba(148,163,184,.16)' } }, yaxis: { opposite: true, decimalsInFloat: 5 }, tooltip: { theme: 'dark', shared: true }, legend: { show: false }
             });
-            Promise.all([candleChart.render(), macdChart.render()]).then(function () { setStatus(null); });
+            Promise.all([candleChart.render(), macdChart.render()]).then(function () {
+                setStatus(null);
+                requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
+            });
             var last = candles[candles.length - 1], change = last.close - last.open;
             price.innerHTML = '<strong>' + last.close.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</strong> <span style="color:' + (change >= 0 ? '#20e19a' : '#ff5263') + '">' + (change >= 0 ? '+' : '') + change.toFixed(6) + '</span> · ' + payload.provider;
         }
@@ -566,6 +599,13 @@ $detect = new Mobile_Detect;
                 .then(function (response) { return response.json().then(function (body) { if (!response.ok) throw new Error(body.message || 'Market data request failed.'); return body; }); })
                 .then(render).catch(function (error) { setStatus(error.message, true); price.textContent = 'Market data unavailable'; });
         }
+        function refreshChartLayout() {
+            window.setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 80);
+        }
+        window.addEventListener('load', refreshChartLayout);
+        window.addEventListener('pageshow', refreshChartLayout);
+        window.addEventListener('orientationchange', refreshChartLayout);
+        if (window.visualViewport) window.visualViewport.addEventListener('resize', refreshChartLayout);
         load('15min');
     }
 </script>
