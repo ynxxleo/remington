@@ -165,7 +165,7 @@ $detect = new Mobile_Detect;
                 font-size: .82rem;
                 font-weight: 700;
             }
-            .bot-mobile-balance span {
+            .bot-mobile-balance > span {
                 padding: 7px 13px;
                 border: 1px solid rgba(37,230,144,.7);
                 border-radius: 999px;
@@ -642,7 +642,7 @@ $detect = new Mobile_Detect;
                 requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
             });
             var last = candles[candles.length - 1], change = last.close - last.open;
-            price.innerHTML = '<strong>' + last.close.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</strong> <span style="color:' + (change >= 0 ? '#20e19a' : '#ff5263') + '">' + (change >= 0 ? '+' : '') + change.toFixed(6) + '</span>';
+            price.innerHTML = '<strong>' + last.close.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</strong> <span style="color:' + (change >= 0 ? '#20e19a' : '#ff5263') + '">' + (change >= 0 ? '+' : '') + change.toFixed(6) + '</span> · ' + (payload.provider || 'Live data');
         }
         function load(interval) {
             setStatus('Loading live candles…', false);
