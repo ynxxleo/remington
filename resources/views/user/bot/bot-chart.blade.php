@@ -148,13 +148,33 @@ $detect = new Mobile_Detect;
                 flex-direction: column;
                 width: 100vw;
                 max-width: none;
-                height: calc(100svh - 122px);
-                min-height: 590px;
+                height: calc(100svh - 96px);
+                min-height: 0;
                 margin: 0 0 0 calc(50% - 50vw);
+                background: #062137;
+            }
+            .bot-mobile-balance {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                min-height: 44px;
+                padding: 6px 14px;
+                color: #35df9a;
+                background: #062137;
+                border-bottom: 1px solid rgba(148,163,184,.16);
+                font-size: .82rem;
+                font-weight: 700;
+            }
+            .bot-mobile-balance span {
+                padding: 7px 13px;
+                border: 1px solid rgba(37,230,144,.7);
+                border-radius: 999px;
+                background: rgba(37,230,144,.05);
             }
             .bot-mobile-stage .market-chart-column {
                 flex: 1 1 auto;
                 min-height: 0;
+                height: auto !important;
             }
             .market-chart-shell {
                 height: 100%;
@@ -162,15 +182,16 @@ $detect = new Mobile_Detect;
                 border: 0;
                 border-radius: 0;
                 box-shadow: none;
+                background: #062137;
             }
-            .native-chart__topbar { align-items: flex-start; padding: 12px; }
+            .native-chart__topbar { align-items: center; padding: 10px 12px; min-height: 58px; background: #082a43; }
             .native-chart__identity { padding-top: 4px; }
             .native-chart__mark { width: 34px; height: 34px; }
             .native-chart__intervals { max-width: 58%; overflow-x: auto; }
             .native-chart__interval { padding: 7px 9px; }
             .native-chart__body { padding-inline: 0; }
-            .native-chart__main { min-height: 0; height: 68%; }
-            .native-chart__indicator { min-height: 88px; height: 30%; }
+            .native-chart__main { min-height: 0; height: 72%; }
+            .native-chart__indicator { min-height: 74px; height: 24%; }
             body.bot-trader-page { overflow: hidden !important; }
             body.bot-trader-page .fin-subpage-head { display: none !important; }
             body.bot-trader-page .app-content { height: 100svh; overflow: hidden !important; padding-bottom: 0 !important; }
@@ -202,6 +223,27 @@ $detect = new Mobile_Detect;
             .bot-mobile-actions #botcontract .mb-1 { margin-bottom: .5rem !important; }
             .bot-mobile-actions #selectBot,
             .bot-mobile-actions #botTimed { min-height: 44px; }
+            .bot-mobile-actions #selectBot {
+                color: #fff !important;
+                border-color: #f4c400 !important;
+                background: #f4c400 !important;
+                box-shadow: none;
+            }
+            .bot-mobile-actions #botTimed {
+                color: #f0a52b !important;
+                background: transparent !important;
+                box-shadow: none;
+            }
+            .bot-mobile-actions .input-group .form-control {
+                color: #aab8c4 !important;
+                background: transparent !important;
+                border-color: rgba(148,163,184,.35) !important;
+            }
+            .bot-mobile-actions .input-group .input-group-text {
+                color: #dbe5eb !important;
+                background: transparent !important;
+                border-color: rgba(148,163,184,.35) !important;
+            }
             .bot-mobile-actions .input-group .form-control,
             .bot-mobile-actions .input-group .input-group-text { min-height: 46px !important; }
             .bot-mobile-actions #botcontract button[type="submit"].btn-success { min-height: 48px; }
@@ -261,6 +303,7 @@ $detect = new Mobile_Detect;
     </div>
 </div>
 <div class="bot-mobile-stage">
+    <div class="bot-mobile-balance"><span>{{ $general->cur_sym }}<livewire:partials.balance /></span></div>
     <div class="market-chart-column h-100">
         <div class="market-chart-shell js-market-chart"></div>
     </div>
