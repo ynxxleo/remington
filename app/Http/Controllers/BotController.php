@@ -38,7 +38,10 @@ class BotController extends Controller
 
         try {
             return response()->json(Cache::remember($cacheKey, now()->addSeconds(45), function () use ($data, $symbol, $pair) {
-                $apiKey = config('services.twelve_data.key');
+                // Read through the configured service first, with an env fallback
+                // for deployments where the config cache was built before the key
+                // was added to .env.
+                $apiKey = config('services.twelve_data.key') ?: env('TWELVE_DATA_API_KEY');
 
                 if ($apiKey) {
                     $providerSymbol = $data['asset'] === 'stock'

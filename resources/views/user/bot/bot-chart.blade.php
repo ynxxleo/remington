@@ -211,8 +211,8 @@ $detect = new Mobile_Detect;
                 left: auto;
                 flex: 0 0 auto;
                 width: 100% !important;
-                margin: -24px 0 0 !important;
-                padding: 10px;
+                margin: 0 !important;
+                padding: 8px 10px 12px;
                 border: 0;
                 border-top: 1px solid rgba(148, 163, 184, .18);
                 border-radius: 18px 18px 0 0;
@@ -251,6 +251,12 @@ $detect = new Mobile_Detect;
             .bot-mobile-actions .input-group .input-group-text { min-height: 46px !important; }
             .bot-mobile-actions #botcontract button[type="submit"].btn-success { min-height: 48px; }
             .bot-mobile-actions .row { --bs-gutter-x: .55rem; }
+            .bot-mobile-actions form,
+            .bot-mobile-actions .row,
+            .bot-mobile-actions .col,
+            .bot-mobile-actions .input-group { width: 100%; max-width: 100%; min-width: 0; }
+            .bot-mobile-actions .col { padding-inline: 0; }
+            .bot-mobile-actions .row { margin-inline: 0 !important; }
             .native-chart__footer { display: none; }
             .native-chart__main .apexcharts-toolbar {
                 top: 8px !important;
