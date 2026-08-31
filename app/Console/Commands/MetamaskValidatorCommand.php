@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\ICO;
 use App\Models\Transaction;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Http;
 
 
@@ -43,7 +44,20 @@ class MetamaskValidatorCommand extends Command
      */
     public function handle()
     {
-        $ico_address = ICO::where('status',1)->first()->address;
+        // ICO is an optional module. Some installations do not have its
+        // tables, but the scheduler still invokes this command every minute.
+        if (!Schema::hasTable('icos')) {
+            $this->line('ICO table is not installed; skipping validator.');
+            return self::SUCCESS;
+        }
+
+        $ico = ICO::where('status', 1)->first();
+        if (!$ico || !$ico->address) {
+            $this->line('No active ICO address configured; skipping validator.');
+            return self::SUCCESS;
+        }
+
+        $ico_address = $ico->address;
         return $this->validateTransactions($ico_address);
     }
     /**
