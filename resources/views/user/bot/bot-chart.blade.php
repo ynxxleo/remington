@@ -146,12 +146,12 @@ $detect = new Mobile_Detect;
                 position: relative;
                 display: flex;
                 flex-direction: column;
-                width: 100vw;
-                max-width: none;
+                width: 100%;
+                max-width: 100%;
                 height: calc(100svh - 96px);
                 min-height: 0;
-                margin: 0 0 0 calc(50% - 50vw);
-                background: #062137;
+                margin: 0;
+                background: #080c0b;
             }
             .bot-mobile-balance {
                 display: flex;
@@ -160,7 +160,7 @@ $detect = new Mobile_Detect;
                 min-height: 44px;
                 padding: 6px 14px;
                 color: #35df9a;
-                background: #062137;
+                background: #080c0b;
                 border-bottom: 1px solid rgba(148,163,184,.16);
                 font-size: .82rem;
                 font-weight: 700;
@@ -182,9 +182,9 @@ $detect = new Mobile_Detect;
                 border: 0;
                 border-radius: 0;
                 box-shadow: none;
-                background: #062137;
+                background: #080c0b;
             }
-            .native-chart__topbar { align-items: center; padding: 10px 12px; min-height: 58px; background: #062137; }
+            .native-chart__topbar { align-items: center; padding: 10px 12px; min-height: 58px; background: #080c0b; }
             .native-chart { min-width: 0; overflow: hidden; }
             .native-chart__identity { padding-top: 4px; }
             .native-chart__mark { width: 34px; height: 34px; }
@@ -250,12 +250,12 @@ $detect = new Mobile_Detect;
             .bot-mobile-actions .input-group .form-control,
             .bot-mobile-actions .input-group .input-group-text { min-height: 46px !important; }
             .bot-mobile-actions #botcontract button[type="submit"].btn-success { min-height: 48px; }
-            .bot-mobile-actions .row { --bs-gutter-x: .55rem; }
+            .bot-mobile-actions .row { --bs-gutter-x: 0; gap: 8px; }
             .bot-mobile-actions form,
             .bot-mobile-actions .row,
             .bot-mobile-actions .col,
             .bot-mobile-actions .input-group { width: 100%; max-width: 100%; min-width: 0; }
-            .bot-mobile-actions .col { padding-inline: 0; }
+            .bot-mobile-actions .col { flex: 1 1 0; width: auto; padding-inline: 0; }
             .bot-mobile-actions .row { margin-inline: 0 !important; }
             .native-chart__footer { display: none; }
             .native-chart__main .apexcharts-toolbar {
