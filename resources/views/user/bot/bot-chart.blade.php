@@ -184,7 +184,8 @@ $detect = new Mobile_Detect;
                 box-shadow: none;
                 background: #062137;
             }
-            .native-chart__topbar { align-items: center; padding: 10px 12px; min-height: 58px; background: #082a43; }
+            .native-chart__topbar { align-items: center; padding: 10px 12px; min-height: 58px; background: #062137; }
+            .native-chart { min-width: 0; overflow: hidden; }
             .native-chart__identity { padding-top: 4px; }
             .native-chart__mark { width: 34px; height: 34px; }
             .native-chart__intervals { max-width: 58%; overflow-x: auto; }
@@ -200,6 +201,8 @@ $detect = new Mobile_Detect;
             }
             body.bot-trader-page .content-body { width: 100% !important; max-width: none !important; }
             body.bot-trader-page .footer { display: none !important; }
+            body.bot-trader-page .header-navbar .navbar-container > .navbar-nav > .nav-item:has(.btn-outline-success) { display: none !important; }
+            body.bot-trader-page .header-navbar { overflow: hidden !important; }
             .bot-mobile-actions {
                 position: relative !important;
                 z-index: 8;
@@ -213,7 +216,7 @@ $detect = new Mobile_Detect;
                 border: 0;
                 border-top: 1px solid rgba(148, 163, 184, .18);
                 border-radius: 18px 18px 0 0;
-                background: rgba(7, 13, 11, .86);
+                background: #062137;
                 box-shadow: 0 20px 55px rgba(0, 0, 0, .46);
                 backdrop-filter: blur(18px) saturate(130%);
                 -webkit-backdrop-filter: blur(18px) saturate(130%);
@@ -639,7 +642,7 @@ $detect = new Mobile_Detect;
                 requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
             });
             var last = candles[candles.length - 1], change = last.close - last.open;
-            price.innerHTML = '<strong>' + last.close.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</strong> <span style="color:' + (change >= 0 ? '#20e19a' : '#ff5263') + '">' + (change >= 0 ? '+' : '') + change.toFixed(6) + '</span> · ' + payload.provider;
+            price.innerHTML = '<strong>' + last.close.toLocaleString(undefined, { maximumFractionDigits: 6 }) + '</strong> <span style="color:' + (change >= 0 ? '#20e19a' : '#ff5263') + '">' + (change >= 0 ? '+' : '') + change.toFixed(6) + '</span>';
         }
         function load(interval) {
             setStatus('Loading live candles…', false);
