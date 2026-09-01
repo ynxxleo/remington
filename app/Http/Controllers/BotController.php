@@ -43,13 +43,13 @@ class BotController extends Controller
                 // was added to .env.
                 $apiKey = config('services.twelve_data.key') ?: env('TWELVE_DATA_API_KEY');
 
-                // Twelve Data is used for FX and stocks. Crypto pairs are
-                // served by Binance because symbols such as USDC/USDT are
-                // not consistently available through Twelve Data.
-                if ($apiKey && $data['asset'] !== 'crypto') {
+                // Twelve Data is the primary source for every chart. Its
+                // crypto catalog commonly exposes stablecoin markets against
+                // USD, so normalize USDT quotes to the equivalent USD pair.
+                if ($apiKey) {
                     $providerSymbol = $data['asset'] === 'stock'
                         ? $symbol
-                        : $symbol.'/'.$pair;
+                        : $symbol.'/'.($data['asset'] === 'crypto' && $pair === 'USDT' ? 'USD' : $pair);
                     $response = Http::acceptJson()->timeout(12)->retry(2, 250)->get(
                         rtrim(config('services.twelve_data.url'), '/').'/time_series',
                         [
