@@ -43,7 +43,10 @@ class BotController extends Controller
                 // was added to .env.
                 $apiKey = config('services.twelve_data.key') ?: env('TWELVE_DATA_API_KEY');
 
-                if ($apiKey) {
+                // Twelve Data is used for FX and stocks. Crypto pairs are
+                // served by Binance because symbols such as USDC/USDT are
+                // not consistently available through Twelve Data.
+                if ($apiKey && $data['asset'] !== 'crypto') {
                     $providerSymbol = $data['asset'] === 'stock'
                         ? $symbol
                         : $symbol.'/'.$pair;
