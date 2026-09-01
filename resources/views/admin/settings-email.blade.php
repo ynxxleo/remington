@@ -5,6 +5,32 @@ $page_title = 'Email Setup';
 @section('title', 'Email Setup')
 @section('page-style')
     <link rel="stylesheet" href="{{ asset(mix('css/kyc/style.css'))}}">
+    <style>
+        .page-content { display:block!important; min-height:calc(100vh - 110px); overflow:visible!important; background:#080c0b!important; color:#f4f8f6!important; }
+        .page-content .container, .page-content .row, .page-content .main-content { display:block!important; width:100%; max-width:1180px; }
+        .page-content .main-content { margin-inline:auto; }
+        .page-content .content-area { display:block!important; min-height:240px; overflow:visible!important; background:#101614!important; border:1px solid #222c28!important; color:#f4f8f6!important; }
+        .page-content .card-header, .page-content .card-text { display:flex; color:#f4f8f6!important; background:transparent!important; }
+        .page-content .card-text { display:block!important; }
+        .page-content .card-title, .page-content .list-content span { color:#f4f8f6!important; }
+        .page-content .list .item { border-color:#28332e!important; }
+        html[data-trading-theme="dark"] .page-content { display:block!important; min-height:calc(100vh - 110px); color:#f4f8f6!important; background:#080c0b!important; }
+        html[data-trading-theme="dark"] .page-content .container { max-width:1180px; }
+        html[data-trading-theme="dark"] .page-content .content-area { display:block!important; overflow:visible!important; background:#101614!important; border:1px solid #222c28!important; color:#f4f8f6!important; }
+        html[data-trading-theme="dark"] .page-content .card-header,
+        html[data-trading-theme="dark"] .page-content .card-text { color:#f4f8f6!important; background:transparent!important; }
+        html[data-trading-theme="dark"] .page-content .card-title,
+        html[data-trading-theme="dark"] .page-content .list-content span { color:#f4f8f6!important; }
+        html[data-trading-theme="dark"] .page-content .list .item { border-color:#28332e!important; }
+        @media(max-width:767.98px) {
+            .page-content { padding:18px 10px 40px!important; }
+            html[data-trading-theme="dark"] .page-content .container { padding:0!important; }
+            html[data-trading-theme="dark"] .page-content .card-innr { padding:18px!important; }
+            html[data-trading-theme="dark"] .page-content .card-header { gap:12px; flex-wrap:wrap; }
+            html[data-trading-theme="dark"] .page-content .card-header ul { margin:0 0 0 auto; padding:0; }
+            html[data-trading-theme="dark"] .page-content .card-title { font-size:20px!important; }
+        }
+    </style>
 @endsection
 @section('content')
 <div class="page-content">
@@ -23,6 +49,9 @@ $page_title = 'Email Setup';
                         </div>
                         <div class="card-text">
                             <ul class="list list-s1 list-col2x">
+                                @if($templates->isEmpty())
+                                    <li class="item"><div class="list-content"><span>No email templates are available.</span></div></li>
+                                @endif
                                 @foreach($templates as $template)
                                 <li class="item">
                                     <div class="list-content justify-content-between">
@@ -225,4 +254,3 @@ $page_title = 'Email Setup';
 </div>
 {{-- Modal End --}}
 @endsection
-
