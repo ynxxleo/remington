@@ -401,3 +401,5 @@ body.vertical-layout .input-group:has(#amount) .input-group-text,
 .nova-ticker [data-bitcoin-change].is-negative {
   color: #ff6270 !important;
 }
+/* Shared notification control for admin and user workspace headers. */
+.vertical-layout .nova-notification-button{position:relative;display:grid!important;place-items:center;width:40px;height:40px;margin:0 4px;border:1px solid var(--tu-line);border-radius:12px;color:var(--tu-text)!important;background:var(--tu-surface-2);transition:.2s ease}.vertical-layout .nova-notification-button:hover{border-color:var(--tu-accent);color:var(--tu-accent)!important;transform:translateY(-1px)}.vertical-layout .nova-notification-button i{font-size:17px;line-height:1}.vertical-layout .dropdown-notification .badge-up{top:2px;right:0}

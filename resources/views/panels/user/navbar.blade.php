@@ -82,6 +82,11 @@
 
       <li class="nav-item d-none d-md-block"><button class="nova-round-action" type="button" aria-label="Search"><i class="bi bi-search"></i></button></li>
       <li class="nav-item d-none d-xl-block"><span class="nova-date-pill"><i class="bi bi-calendar3"></i>{{ now()->format('d M, Y') }}</span></li>
+      <li class="nav-item dropdown dropdown-notification me-25">
+        <a class="nav-link ringing nova-notification-button" href="{{ route('user.transaction.log') }}" aria-label="Notifications">
+          <i class="bi bi-bell font-medium-5"></i>
+        </a>
+      </li>
 
     @if ($plat->binary == 0)
     <li class="nav-item dropdown">

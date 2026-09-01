@@ -60,7 +60,7 @@
               </div>
               <ul class="nav navbar-nav align-items-center ms-auto">
                   <li class="nav-item dropdown dropdown-notification me-25">
-                      <a class="nav-link ringing" href="javascript:void(0);" data-bs-toggle="dropdown">
+                      <a class="nav-link ringing nova-notification-button" href="javascript:void(0);" data-bs-toggle="dropdown" aria-label="Notifications">
                           <i class="bi bi-bell font-medium-5"></i>
                           @if($adminNotifications->count() > 0)
                           <span class="badge rounded-pill bg-danger badge-up">{{ $adminNotifications->count() }}</span>
