@@ -57,7 +57,7 @@
         <form class="withdraw-form" action="{{route('user.withdraw.submit')}}" method="post"
             enctype="multipart/form-data">
             @csrf
-            @if($withdraw->method->user_data)
+            @if($withdraw->method->user_data && strcasecmp($withdraw->method->name, 'Bank Withdrawal') !== 0)
             @foreach($withdraw->method->user_data as $k => $v)
             @if($v->type == "text")
             <div class="col">
@@ -120,4 +120,3 @@
 @push('script-lib')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.2.7/js/fileinput.min.js"></script>
 @endpush
-

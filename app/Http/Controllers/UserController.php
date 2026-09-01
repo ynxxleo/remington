@@ -592,6 +592,18 @@ class UserController extends Controller
         $withdraw->trx = getTrx();
         $withdraw->save();
         session()->put('wtrx', $withdraw->trx);
+        if (strcasecmp($method->name, 'Bank Withdrawal') === 0 && $method->user_data) {
+            $bankInformation = [];
+            foreach ($method->user_data as $key => $field) {
+                if ($request->filled($key)) {
+                    $bankInformation[$key] = [
+                        'field_name' => $request->input($key),
+                        'type' => $field->type,
+                    ];
+                }
+            }
+            session()->put('bank_withdraw_information', $bankInformation);
+        }
         return redirect()->route('user.withdraw.preview');
     }
 
@@ -611,7 +623,8 @@ class UserController extends Controller
         $withdraw = Withdrawal::with('method','user')->where('trx', session()->get('wtrx'))->where('status', 0)->latest()->firstOrFail();
         $rules = [];
         $inputField = [];
-        if ($withdraw->method->user_data != null) {
+        $isBankWithdrawal = strcasecmp($withdraw->method->name, 'Bank Withdrawal') === 0;
+        if (!$isBankWithdrawal && $withdraw->method->user_data != null) {
             foreach ($withdraw->method->user_data as $key => $cus) {
                 $rules[$key] = [$cus->validation];
                 if ($cus->type == 'file') {
@@ -640,8 +653,8 @@ class UserController extends Controller
         $directory = date("Y")."/".date("m")."/".date("d");
         $path = imagePath()['verify']['withdraw']['path'].'/'.$directory;
         $collection = collect($request);
-        $reqField = [];
-        if ($withdraw->method->user_data != null) {
+        $reqField = $isBankWithdrawal ? session()->pull('bank_withdraw_information', []) : [];
+        if (!$isBankWithdrawal && $withdraw->method->user_data != null) {
             foreach ($collection as $k => $v) {
                 foreach ($withdraw->method->user_data as $inKey => $inVal) {
                     if ($k != $inKey) {
