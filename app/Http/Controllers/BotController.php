@@ -107,6 +107,34 @@ class BotController extends Controller
                             return ['provider' => 'Binance', 'candles' => $candles];
                         }
                     }
+
+                    // Some shared hosts block Binance. Coinbase provides the
+                    // same public candles without authentication for supported
+                    // USD/USDT crypto pairs.
+                    $coinbaseProduct = $symbol.'-'.$pair;
+                    $coinbaseGranularity = [
+                        '1min' => 60, '5min' => 300, '15min' => 900,
+                        '30min' => 1800, '1h' => 3600, '1day' => 86400,
+                    ][$data['interval']];
+                    $coinbase = Http::acceptJson()->timeout(12)->retry(1, 250)->get(
+                        'https://api.exchange.coinbase.com/products/'.$coinbaseProduct.'/candles',
+                        ['granularity' => $coinbaseGranularity]
+                    );
+                    if ($coinbase->successful()) {
+                        $candles = collect($coinbase->json())->reverse()->values()->map(function ($bar) {
+                            return [
+                                'time' => (int) $bar[0] * 1000,
+                                'low' => (float) $bar[1],
+                                'high' => (float) $bar[2],
+                                'open' => (float) $bar[3],
+                                'close' => (float) $bar[4],
+                                'volume' => (float) $bar[5],
+                            ];
+                        })->all();
+                        if (count($candles)) {
+                            return ['provider' => 'Coinbase', 'candles' => $candles];
+                        }
+                    }
                 }
 
                 throw new \RuntimeException('Market data is temporarily unavailable.');
