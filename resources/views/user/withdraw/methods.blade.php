@@ -3,6 +3,11 @@
 
 <div class="dashboard-section ">
     <div>
+        <div class="mb-3">
+            <a href="{{ route('user.withdraw.bank', $address) }}" class="btn btn-success">
+                <i class="bi bi-bank"></i> Bank Withdrawal
+            </a>
+        </div>
         <div class="pb-3">
             <div class="row g-4">
                 
@@ -147,4 +152,3 @@
     </script>
 
 @endpush
-

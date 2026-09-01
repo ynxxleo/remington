@@ -541,6 +541,16 @@ class UserController extends Controller
         return view('user.withdraw.methods', $data);
     }
 
+    public function bankWithdraw($address)
+    {
+        $method = WithdrawMethod::where('name', 'Bank Withdrawal')->where('status', 1)->firstOrFail();
+        return view('user.withdraw.bank', [
+            'page_title' => 'Bank Withdrawal',
+            'address' => $address,
+            'method' => $method,
+        ]);
+    }
+
     public function withdrawStore(Request $request)
     {
         $this->validate($request, [

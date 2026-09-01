@@ -264,6 +264,7 @@ Route::group(['middleware' => 'auth'], function() {
 
         // Withdraw
         Route::get('/withdraw/wallet/{address}', 'UserController@withdrawMoney')->middleware('checkKYC')->name('withdraw');
+        Route::get('/withdraw/bank/{address}', 'UserController@bankWithdraw')->middleware('checkKYC')->name('withdraw.bank');
         Route::post('/withdraw', 'UserController@withdrawStore')->name('withdraw.money');
         Route::get('/withdraw/preview', 'UserController@withdrawPreview')->name('withdraw.preview');
         Route::post('/withdraw/preview', 'UserController@withdrawSubmit')->name('withdraw.submit');
