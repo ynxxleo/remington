@@ -53,6 +53,12 @@ class Withdraw extends Notification implements ShouldQueue
         $transaction = $this->tnx_data;
         $user = $this->tnx_data->user;
 
+        if ($this->template === 'user-requested' && strcasecmp($this->withd->method->name, 'Bank Withdrawal') === 0) {
+            $template->subject = 'Bank withdrawal request submitted - '.site_info('name', false);
+            $template->greeting = 'Hello '.$user->name;
+            $template->message = $this->bankWithdrawalMessage();
+        }
+
         $template->message = $this->replace_shortcode($template->message);
         $template->regards = ($template->regards == 'true' ? get_setting('site_mail_footer', "Best Regards, \n[[site_name]]") : '');
 
@@ -62,6 +68,29 @@ class Withdraw extends Notification implements ShouldQueue
                     ->from($from_email, $from_name)
                     ->subject($this->replace_shortcode($template->subject))
                     ->markdown('mail.transaction', compact('template', 'transaction','user'));
+    }
+
+    protected function bankWithdrawalMessage()
+    {
+        $details = (array) ($this->withd->withdraw_information ?? []);
+        $rows = [];
+        foreach ($details as $key => $value) {
+            $value = is_object($value) ? ($value->field_name ?? '') : $value;
+            $label = ucwords(str_replace('_', ' ', $key));
+            $sensitive = in_array(strtolower($key), ['account_number', 'routing_number', 'iban', 'sort_code', 'swift_code'], true);
+            if ($sensitive) {
+                $digits = preg_replace('/\D+/', '', (string) $value);
+                $value = $digits !== '' ? str_repeat('*', max(0, strlen($digits) - 4)).substr($digits, -4) : 'Not provided';
+            }
+            $rows[] = '<tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>'.e($label).'</strong></td><td style="padding:6px 0">'.e((string) $value).'</td></tr>';
+        }
+
+        return '<p>Your bank withdrawal request has been submitted and is now pending review.</p>'
+            .'<p><strong>Withdrawal details</strong></p>'
+            .'<table><tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Amount</strong></td><td style="padding:6px 0">'.e(getAmount($this->tnx_data->amount).' '.$this->tnx_data->currency).'</td></tr>'
+            .'<tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Reference</strong></td><td style="padding:6px 0">'.e($this->tnx_data->trx).'</td></tr>'
+            .'<tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Status</strong></td><td style="padding:6px 0">Pending</td></tr></table>'
+            .'<p><strong>Bank details</strong></p><table>'.implode('', $rows).'</table>';
     }
 
     /**
