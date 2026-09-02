@@ -59,7 +59,7 @@ data-asset-path="{{ asset('/')}}">
         @if(Request::is('admin**'))
             @include('admin.partials.breadcrumb')
         @endif
-        @if(Request::is('user/*') && !Request::is('user/dashboard/practice', 'user/dashboard/trade'))
+        @if(Request::is('user/*') && !Request::is('user/dashboard/practice', 'user/dashboard/trade', 'user/dashboard/bot*', 'user/dashboard/fx/bot*', 'user/dashboard/st/bot*'))
           <header class="fin-subpage-head">
             <div>
               <small>{{ now()->format('l, d F Y') }}</small>
