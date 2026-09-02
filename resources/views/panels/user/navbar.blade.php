@@ -81,6 +81,9 @@
   <ul class="nav navbar-nav align-items-center ms-auto">
 
       <li class="nav-item d-none d-md-block"><button class="nova-round-action" type="button" aria-label="Search"><i class="bi bi-search"></i></button></li>
+      @if (Request::is('user/dashboard/bot*', 'user/dashboard/fx/bot*', 'user/dashboard/st/bot*'))
+      <li class="nav-item"><span class="nova-balance-pill">{{ $general->cur_sym }}<livewire:partials.balance /></span></li>
+      @endif
       <li class="nav-item d-none d-xl-block"><span class="nova-date-pill"><i class="bi bi-calendar3"></i>{{ now()->format('d M, Y') }}</span></li>
       <li class="nav-item dropdown dropdown-notification me-25">
         <a class="nav-link ringing nova-notification-button d-flex" style="display:grid!important" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">

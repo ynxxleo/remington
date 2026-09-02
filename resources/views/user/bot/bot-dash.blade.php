@@ -28,7 +28,7 @@
                                 <i class="bi bi-robot font-medium-5"></i>
                             </div>
                         </div>
-                        <h2 class="fw-bolder">{{$bot_contracts_count->where('status','!=',1)->count()}}</h2>
+                        <h2 class="fw-bolder bot-stat-value">{{$bot_contracts_count->where('status','!=',1)->count()}}</h2>
                         <p class="card-text">{{ __('locale.Running Bots')}}</p>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                                 <i class="bi bi-check-lg font-medium-5"></i>
                             </div>
                         </div>
-                        <h2 class="fw-bolder">{{$bot_contracts_count->where('status',1)->count()}}</h2>
+                        <h2 class="fw-bolder bot-stat-value">{{$bot_contracts_count->where('status',1)->count()}}</h2>
                         <p class="card-text">{{ __('locale.Completed Bots')}}</p>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                                 <i class="bi bi-robot font-medium-5"></i>
                             </div>
                         </div>
-                        <h2 class="fw-bolder">{{getAmount($bot_contracts_count->sum('amount'))}} {{$gnl->cur_text}}</h2>
+                        <h2 class="fw-bolder bot-stat-value">{{getAmount($bot_contracts_count->sum('amount'))}} {{$gnl->cur_text}}</h2>
                         <p class="card-text">{{ __('locale.Total Investment')}}</p>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                                 <i class="bi bi-check-lg font-medium-5"></i>
                             </div>
                         </div>
-                        <h2 class="fw-bolder @if ($profit > 0) text-success @elseif($profit < 0) text-danger @else @endif">{{getAmount($profit)}} {{$gnl->cur_text}}</h2>
+                        <h2 class="fw-bolder bot-stat-value @if ($profit > 0) text-success @elseif($profit < 0) text-danger @else @endif">{{getAmount($profit)}} {{$gnl->cur_text}}</h2>
                         <p class="card-text">{{ __('Bot Balance')}}</p>
                     </div>
                 </div>
