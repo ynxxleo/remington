@@ -16,7 +16,7 @@ class EmailTemplate extends Model
      * All Templates Name
      */
     protected static $names = [
-        'welcome-email','kyc-approved-email', 'kyc-rejected-email', 'kyc-missing-email', 'kyc-submit-email', 'send-user-email', 'support-ticket-reply', 'users-unusual-login-email', 'automated-deposit-successful', 'manual-deposit-user-requested', 'manual-deposit-admin-approved', 'manual-deposit-admin-rejected', 'withdraw-user-requested', 'withdraw-admin-rejected', 'withdraw-admin-approved', 'balance-add-by-admin', 'balance-subtracted-by-admin', 'Commission Bonus',
+        'welcome-email','kyc-approved-email', 'kyc-rejected-email', 'kyc-missing-email', 'kyc-submit-email', 'send-user-email', 'support-ticket-reply', 'users-unusual-login-email', 'automated-deposit-successful', 'manual-deposit-user-requested', 'manual-deposit-admin-approved', 'manual-deposit-admin-rejected', 'withdraw-user-requested', 'withdraw-admin-rejected', 'withdraw-admin-approved', 'bank-withdraw-user-requested', 'bank-withdraw-admin-approved', 'balance-add-by-admin', 'balance-subtracted-by-admin', 'Commission Bonus',
     ];
 
     /**

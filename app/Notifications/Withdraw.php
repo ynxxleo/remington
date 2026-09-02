@@ -49,14 +49,14 @@ class Withdraw extends Notification implements ShouldQueue
         $from_name = email_setting('from_name', get_setting('site_name'));
         $from_email = email_setting('from_email', get_setting('site_email'));
 
-        $template = ET::get_template('withdraw-'.$this->template);
+        $isBankWithdrawal = strcasecmp($this->withd->method->name, 'Bank Withdrawal') === 0;
+        $templateSlug = $isBankWithdrawal ? 'bank-withdraw-'.$this->template : 'withdraw-'.$this->template;
+        $template = ET::get_template($templateSlug);
         $transaction = $this->tnx_data;
         $user = $this->tnx_data->user;
 
-        if ($this->template === 'user-requested' && strcasecmp($this->withd->method->name, 'Bank Withdrawal') === 0) {
-            $template->subject = 'Bank withdrawal request submitted - '.site_info('name', false);
-            $template->greeting = 'Hello '.$user->name;
-            $template->message = $this->bankWithdrawalMessage();
+        if ($isBankWithdrawal && empty(trim((string) $template->message))) {
+            $template->message = $this->bankWithdrawalMessage($this->template === 'admin-approved' ? 'Approved' : 'Pending');
         }
 
         $template->message = $this->replace_shortcode($template->message);
@@ -70,7 +70,7 @@ class Withdraw extends Notification implements ShouldQueue
                     ->markdown('mail.transaction', compact('template', 'transaction','user'));
     }
 
-    protected function bankWithdrawalMessage()
+    protected function bankWithdrawalMessage($status = 'Pending')
     {
         $details = (array) ($this->withd->withdraw_information ?? []);
         $rows = [];
@@ -89,7 +89,7 @@ class Withdraw extends Notification implements ShouldQueue
             .'<p><strong>Withdrawal details</strong></p>'
             .'<table><tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Amount</strong></td><td style="padding:6px 0">'.e(getAmount($this->tnx_data->amount).' '.$this->tnx_data->currency).'</td></tr>'
             .'<tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Reference</strong></td><td style="padding:6px 0">'.e($this->tnx_data->trx).'</td></tr>'
-            .'<tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Status</strong></td><td style="padding:6px 0">Pending</td></tr></table>'
+            .'<tr><td style="padding:6px 12px 6px 0;color:#68757e"><strong>Status</strong></td><td style="padding:6px 0">'.e($status).'</td></tr></table>'
             .'<p><strong>Bank details</strong></p><table>'.implode('', $rows).'</table>';
     }
 
@@ -133,6 +133,7 @@ class Withdraw extends Notification implements ShouldQueue
             '[[user_name]]',
             '[[user_email]]',
             '[[admin_details]]',
+            '[[bank_details]]',
         );
         $replace = array(
             "<br>",
@@ -153,9 +154,25 @@ class Withdraw extends Notification implements ShouldQueue
             $this->tnx_data->user->name,
             $this->tnx_data->user->email,
             $this->withd->admin_feedback,
+            $this->bankDetailsHtml(),
 
         );
         $return = str_replace($shortcode, $replace, $code);
         return $return;
+    }
+
+    protected function bankDetailsHtml()
+    {
+        $details = (array) ($this->withd->withdraw_information ?? []);
+        $rows = [];
+        foreach ($details as $key => $value) {
+            $value = is_object($value) ? ($value->field_name ?? '') : $value;
+            $digits = preg_replace('/\D+/', '', (string) $value);
+            if (in_array(strtolower($key), ['account_number', 'routing_number', 'iban', 'sort_code', 'swift_code'], true)) {
+                $value = $digits !== '' ? str_repeat('*', max(0, strlen($digits) - 4)).substr($digits, -4) : 'Not provided';
+            }
+            $rows[] = '<tr><td><strong>'.e(ucwords(str_replace('_', ' ', $key))).'</strong></td><td>'.e((string) $value).'</td></tr>';
+        }
+        return '<table>'.implode('', $rows).'</table>';
     }
 }
