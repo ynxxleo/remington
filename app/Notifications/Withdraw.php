@@ -183,15 +183,17 @@ class Withdraw extends Notification implements ShouldQueue
     protected function bankDetailValue(array $keys)
     {
         $details = (array) ($this->withd->withdraw_information ?? []);
-        foreach ($keys as $key) {
-            foreach ($details as $name => $value) {
-                if (strtolower((string) $name) !== $key) continue;
-                $value = is_object($value) ? ($value->field_name ?? '') : (is_array($value) ? ($value['field_name'] ?? '') : $value);
+        foreach ($details as $name => $value) {
+            $rawValue = is_object($value) ? ($value->field_name ?? '') : (is_array($value) ? ($value['field_name'] ?? '') : $value);
+            $normalizedName = strtolower(str_replace(['-', ' '], '_', (string) $name));
+            $normalizedLabel = strtolower(str_replace(['-', ' '], '_', (string) ($value->field_level ?? ($value['field_level'] ?? $name))));
+            foreach ($keys as $key) {
+                if ($normalizedName !== $key && $normalizedLabel !== $key) continue;
                 if (in_array($key, ['account_number', 'account'], true)) {
-                    $digits = preg_replace('/\D+/', '', (string) $value);
+                    $digits = preg_replace('/\D+/', '', (string) $rawValue);
                     return $digits !== '' ? str_repeat('*', max(0, strlen($digits) - 4)).substr($digits, -4) : 'Not provided';
                 }
-                return e((string) $value);
+                return e((string) $rawValue);
             }
         }
         return 'Not provided';
