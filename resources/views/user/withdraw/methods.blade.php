@@ -71,6 +71,10 @@
                                 </ul>
                             </div>
                             <div class="card-footer text-center">
+                                @if(strcasecmp($data->name, 'Bank Withdrawal') === 0)
+                                <a href="{{ route('user.withdraw.bank', $address) }}" class="btn mt-2 btn-success">
+                                    @lang('Withdraw Now')</a>
+                                @else
                                 <a href="javascript:void(0)"  data-id="{{$data->id}}"
                                    data-resource="{{$data}}"
                                    data-min_amount="{{getAmount($data->min_limit)}}"
@@ -80,6 +84,7 @@
                                    data-base_symbol="{{__($general->cur_text)}}"
                                    class="btn mt-2 btn-success deposit" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     @lang('Withdraw Now')</a>
+                                @endif
                             </div>
                         </div>
                     </div>
