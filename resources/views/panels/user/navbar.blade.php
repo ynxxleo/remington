@@ -84,7 +84,7 @@
       <li class="nav-item d-none d-xl-block"><span class="nova-date-pill"><i class="bi bi-calendar3"></i>{{ now()->format('d M, Y') }}</span></li>
       <li class="nav-item dropdown dropdown-notification me-25">
         <a class="nav-link ringing nova-notification-button d-flex" style="display:grid!important" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
-          <svg class="nova-bell-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="nova-bell-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="#f4f8f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <ul class="dropdown-menu dropdown-menu-end nova-user-notifications">
           <li class="dropdown-menu-header"><div class="dropdown-header"><h6 class="mb-0">Notifications</h6></div></li>
