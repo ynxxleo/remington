@@ -4,6 +4,10 @@
   <link rel="stylesheet" href="{{ asset(mix('css/kyc/style.css'))}}">
 @endsection
 @section('content')
+<div class="fin-subpage-head">
+    <div><small>{{ now()->format('l, d F Y') }}</small><h1>Bot dashboard</h1></div>
+    <div class="fin-select">{{ $gnl->cur_text }} {{ $gnl->cur_sym }}<livewire:partials.balance /></div>
+</div>
 <div class="row match-height">
     <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="card card-congratulation-medal mh-22vh">
@@ -54,7 +58,7 @@
                                 <i class="bi bi-robot font-medium-5"></i>
                             </div>
                         </div>
-                        <h2 class="fw-bolder">{{$bot_contracts_count->sum('amount')}} {{$general->cur_text}}</h2>
+                        <h2 class="fw-bolder">{{getAmount($bot_contracts_count->sum('amount'))}} {{$gnl->cur_text}}</h2>
                         <p class="card-text">{{ __('locale.Total Investment')}}</p>
                     </div>
                 </div>
@@ -67,7 +71,7 @@
                                 <i class="bi bi-check-lg font-medium-5"></i>
                             </div>
                         </div>
-                        <h2 class="fw-bolder @if ($profit > 0) text-success @elseif($profit < 0) text-danger @else @endif">{{$profit}} {{$general->cur_text}}</h2>
+                        <h2 class="fw-bolder @if ($profit > 0) text-success @elseif($profit < 0) text-danger @else @endif">{{getAmount($profit)}} {{$gnl->cur_text}}</h2>
                         <p class="card-text">{{ __('Bot Balance')}}</p>
                     </div>
                 </div>
