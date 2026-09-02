@@ -75,7 +75,7 @@ class Withdraw extends Notification implements ShouldQueue
         $details = (array) ($this->withd->withdraw_information ?? []);
         $rows = [];
         foreach ($details as $key => $value) {
-            $value = is_object($value) ? ($value->field_name ?? '') : $value;
+            $value = is_object($value) ? ($value->field_name ?? '') : (is_array($value) ? ($value['field_name'] ?? '') : $value);
             $label = ucwords(str_replace('_', ' ', $key));
             $sensitive = in_array(strtolower($key), ['account_number', 'routing_number', 'iban', 'sort_code', 'swift_code'], true);
             if ($sensitive) {
@@ -166,7 +166,7 @@ class Withdraw extends Notification implements ShouldQueue
         $details = (array) ($this->withd->withdraw_information ?? []);
         $rows = [];
         foreach ($details as $key => $value) {
-            $value = is_object($value) ? ($value->field_name ?? '') : $value;
+            $value = is_object($value) ? ($value->field_name ?? '') : (is_array($value) ? ($value['field_name'] ?? '') : $value);
             $digits = preg_replace('/\D+/', '', (string) $value);
             if (in_array(strtolower($key), ['account_number', 'routing_number', 'iban', 'sort_code', 'swift_code'], true)) {
                 $value = $digits !== '' ? str_repeat('*', max(0, strlen($digits) - 4)).substr($digits, -4) : 'Not provided';
