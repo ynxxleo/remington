@@ -134,6 +134,8 @@ class Withdraw extends Notification implements ShouldQueue
             '[[user_email]]',
             '[[admin_details]]',
             '[[bank_details]]',
+            '[[bank_account_name]]',
+            '[[bank_account_number]]',
         );
         $replace = array(
             "<br>",
@@ -155,6 +157,8 @@ class Withdraw extends Notification implements ShouldQueue
             $this->tnx_data->user->email,
             $this->withd->admin_feedback,
             $this->bankDetailsHtml(),
+            $this->bankDetailValue(['account_name', 'account holder', 'name']),
+            $this->bankDetailValue(['account_number', 'account']),
 
         );
         $return = str_replace($shortcode, $replace, $code);
@@ -174,5 +178,22 @@ class Withdraw extends Notification implements ShouldQueue
             $rows[] = '<tr><td><strong>'.e(ucwords(str_replace('_', ' ', $key))).'</strong></td><td>'.e((string) $value).'</td></tr>';
         }
         return '<table>'.implode('', $rows).'</table>';
+    }
+
+    protected function bankDetailValue(array $keys)
+    {
+        $details = (array) ($this->withd->withdraw_information ?? []);
+        foreach ($keys as $key) {
+            foreach ($details as $name => $value) {
+                if (strtolower((string) $name) !== $key) continue;
+                $value = is_object($value) ? ($value->field_name ?? '') : (is_array($value) ? ($value['field_name'] ?? '') : $value);
+                if (in_array($key, ['account_number', 'account'], true)) {
+                    $digits = preg_replace('/\D+/', '', (string) $value);
+                    return $digits !== '' ? str_repeat('*', max(0, strlen($digits) - 4)).substr($digits, -4) : 'Not provided';
+                }
+                return e((string) $value);
+            }
+        }
+        return 'Not provided';
     }
 }
