@@ -654,7 +654,11 @@ class UserController extends Controller
         $path = imagePath()['verify']['withdraw']['path'].'/'.$directory;
         $collection = collect($request);
         $reqField = $isBankWithdrawal ? session()->pull('bank_withdraw_information', []) : [];
-        if (!$isBankWithdrawal && $withdraw->method->user_data != null) {
+        if ($isBankWithdrawal) {
+            // Bank fields were collected on the first step and kept in the
+            // session while the user reviewed the withdrawal.
+            $withdraw['withdraw_information'] = $reqField;
+        } elseif ($withdraw->method->user_data != null) {
             foreach ($collection as $k => $v) {
                 foreach ($withdraw->method->user_data as $inKey => $inVal) {
                     if ($k != $inKey) {
