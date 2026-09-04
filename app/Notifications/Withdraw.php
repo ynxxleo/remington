@@ -186,7 +186,8 @@ class Withdraw extends Notification implements ShouldQueue
         foreach ($details as $name => $value) {
             $rawValue = is_object($value) ? ($value->field_name ?? '') : (is_array($value) ? ($value['field_name'] ?? '') : $value);
             $normalizedName = strtolower(str_replace(['-', ' '], '_', (string) $name));
-            $normalizedLabel = strtolower(str_replace(['-', ' '], '_', (string) ($value->field_level ?? ($value['field_level'] ?? $name))));
+            $fieldLevel = is_object($value) ? ($value->field_level ?? $name) : (is_array($value) ? ($value['field_level'] ?? $name) : $name);
+            $normalizedLabel = strtolower(str_replace(['-', ' '], '_', (string) $fieldLevel));
             foreach ($keys as $key) {
                 if ($normalizedName !== $key && $normalizedLabel !== $key) continue;
                 if (in_array($key, ['account_number', 'account'], true)) {
