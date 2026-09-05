@@ -418,6 +418,8 @@ body.vertical-layout .input-group:has(#amount) .input-group-text,
 .vertical-layout .nova-user-rail .brand-text.nova-sidebar-name,.vertical-layout .nova-user-rail:hover .brand-text.nova-sidebar-name{width:170px!important;max-width:170px!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important}
 .vertical-layout .content-body .bot-dashboard-head{margin-top:18px!important}
 @media(max-width:767.98px){
+  .vertical-layout .content-wrapper,
+  body.vertical-layout:not(.dark-layout) .content-wrapper{padding-top:20px!important}
   .vertical-layout .content-body .fin-subpage-head,
   .vertical-layout .content-body .fin-page-head{margin-top:10px!important}
 }
