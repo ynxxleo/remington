@@ -4,7 +4,7 @@
   <link rel="stylesheet" href="{{ asset(mix('css/kyc/style.css'))}}">
 @endsection
 @section('content')
-<div class="fin-subpage-head">
+<div class="fin-subpage-head bot-dashboard-head">
     <div><small>{{ now()->format('l, d F Y') }}</small><h1>Bot dashboard</h1></div>
     <div class="fin-select">{{ $gnl->cur_text }} {{ $gnl->cur_sym }}<livewire:partials.balance /></div>
 </div>
