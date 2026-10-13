@@ -4,6 +4,10 @@ The fix is on the Git branch `deploy-new-ui-20260827`. These files contain the
 runtime changes:
 
 - `app/Http/Controllers/CronController.php`
+- `app/Http/Controllers/BotController.php`
+- `app/Http/Controllers/Admin/ManageBotController.php`
+- `app/Models/BotContract.php`
+- `database/migrations/2026_10_13_000000_add_funding_wallet_id_to_bot_contracts.php`
 - `app/Console/Kernel.php`
 - `routes/console.php`
 - `resources/views/admin/setting/cron.blade.php`
@@ -20,12 +24,15 @@ succeed before running the application commands:
 ```sh
 cd /home/remibctq/my-remington-app
 git pull --ff-only origin deploy-new-ui-20260827
+/opt/alt/php82/usr/bin/php artisan migrate --path=database/migrations/2026_10_13_000000_add_funding_wallet_id_to_bot_contracts.php --force
 /opt/alt/php82/usr/bin/php artisan optimize:clear
 /opt/alt/php82/usr/bin/php artisan bots:settle
 ```
 
-If Git reports local changes or a diverged branch, retain that output for
-diagnosis. Do not discard server changes to force the pull.
+If the pull or migration fails, retain that output for diagnosis before running
+settlement. Do not discard server changes to force the pull. The migration only
+adds a nullable funding wallet ID to bot contracts; it leaves existing balances
+and contracts intact.
 
 The final command should print `Processed: N; skipped: N; failed: N`.
 If it fails or reports Bot Trader is not installed, retain the output for
@@ -89,10 +96,29 @@ is configured and review its command output. The old `local.DEBUG: api`
 entries came from the separate crypto-price cron; they do not confirm bot
 cron execution. The patch removes the price cron's API-key debug logging.
 
+New contracts record the wallet actually debited when they start. Older FX
+markets from `resources/data/fxpairs.json` and contracts with the `stock` quote
+marker are funded and settled in USDT; their market quote stays unchanged.
+Other older contracts use their quote-currency wallet. A missing wallet is not
+replaced with an unrelated currency.
+
 If a contract fails, check its bot's **Result If Missed** setting and the user's
-wallet for the contract's quote currency. Missing wallets, deleted bots, or
+funding wallet. Missing wallets, deleted bots, or
 invalid result settings are logged and left pending for correction. Other valid
 contracts continue processing. Once corrected, the next cron run retries them.
+
+The supplied server log also identifies contract **1804** as having an invalid
+assigned result. It stays pending for review. Inspect its current record before
+assigning an outcome, especially if the saved result is already 1, 2, or 3
+(completed win/loss/draw codes). Check whether a prior payout occurred before
+reassigning it. Pending assigned outcomes use codes 4, 5, and 6. The admin form
+now validates those codes and cannot reset an already completed contract.
+
+This command reads contract 1804 without changing it:
+
+```sh
+/opt/alt/php82/usr/bin/php artisan tinker --execute='dump(\App\Models\BotContract::whereKey(1804)->get(["id","user_id","symbol","pair","amount","profit","status","result"])->toArray());'
+```
 
 Local regression checks use an isolated in-memory SQLite database:
 

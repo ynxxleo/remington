@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
 class BotController extends Controller
@@ -392,6 +393,11 @@ class BotController extends Controller
         $bot_contract->bot_name = $bot->title;
         $bot_contract->symbol = $request->symbol;
         $bot_contract->pair = $request->pair;
+        // Preserve the market quote separately from the wallet actually debited.
+        // The guard keeps purchases working during the code/migration rollout.
+        if (Schema::hasColumn('bot_contracts', 'funding_wallet_id')) {
+            $bot_contract->funding_wallet_id = $wallet->id;
+        }
         $bot_contract->amount = $request->amount;
         $bot_contract->min_profit = $bot->min_profit;
         $bot_contract->max_profit = $bot->max_profit;

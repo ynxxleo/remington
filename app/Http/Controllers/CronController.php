@@ -432,7 +432,7 @@ class CronController extends Controller
         }
     }
 
-    public function botResult()
+    public function botResult($contractId = null)
     {
         $counts = ['processed' => 0, 'skipped' => 0, 'failed' => 0];
         $gnl = GeneralSetting::first();
@@ -441,8 +441,13 @@ class CronController extends Controller
             $gnl->save();
         }
 
-        BotContract::whereIn('status', [0, 2])
-            ->where('end_date', '<=', Carbon::now())
+        $query = BotContract::whereIn('status', [0, 2])
+            ->where('end_date', '<=', Carbon::now());
+        if ($contractId !== null) {
+            $query->whereKey($contractId);
+        }
+
+        $query
             ->select('id')
             ->chunkById(100, function ($contracts) use (&$counts) {
                 foreach ($contracts as $candidate) {
@@ -492,13 +497,21 @@ class CronController extends Controller
                 }
             }
 
-            $wallet = Wallet::where('user_id', $contract->user_id)
-                ->where('symbol', $contract->pair)
-                ->lockForUpdate()
-                ->first();
+            $walletQuery = Wallet::where('user_id', $contract->user_id);
+            if ($contract->funding_wallet_id) {
+                $walletQuery->whereKey($contract->funding_wallet_id);
+            } else {
+                // Older FX and stock contracts store their market quote in
+                // pair, although their subscription was funded from USDT.
+                $walletQuery->where('symbol', $contract->legacyFundingWalletSymbol());
+            }
+            $wallet = $walletQuery->lockForUpdate()->first();
 
             if (! $wallet) {
-                throw new \RuntimeException('The '.$contract->pair.' wallet is missing for user '.$contract->user_id.'.');
+                $walletLabel = $contract->funding_wallet_id
+                    ? 'funding wallet #'.$contract->funding_wallet_id
+                    : $contract->legacyFundingWalletSymbol().' wallet';
+                throw new \RuntimeException('The '.$walletLabel.' is missing for user '.$contract->user_id.'.');
             }
 
             $settlements = [

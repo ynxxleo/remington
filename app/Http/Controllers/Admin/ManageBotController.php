@@ -8,6 +8,8 @@ use App\Models\BotContract;
 use App\Models\BotTiming;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\CronController;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -112,11 +114,28 @@ class ManageBotController extends Controller
     }
     public function set(Request $request)
     {
-        $bot = BotContract::findOrFail($request->bot_id);
-        $bot->profit = $request->profit;
-        $bot->result = $request->result;
-        $bot->status = '2';
-        $bot->save();
+        $data = $request->validate([
+            'bot_id' => 'required|integer|exists:bot_contracts,id',
+            'profit' => 'required|numeric|min:0',
+            'result' => 'required|in:4,5,6',
+        ]);
+        $updated = DB::transaction(function () use ($data) {
+            $bot = BotContract::whereKey($data['bot_id'])->lockForUpdate()->firstOrFail();
+            if ((int) $bot->status === 1) {
+                return false;
+            }
+            $bot->profit = $data['profit'];
+            $bot->result = $data['result'];
+            $bot->status = 2;
+            $bot->save();
+
+            return true;
+        });
+
+        if (! $updated) {
+            $notify[] = ['warning', 'This bot contract is already completed.'];
+            return back()->withNotify($notify);
+        }
 
         $notify[] = ['success', 'Profit has been adjusted successfully'];
         return back()->withNotify($notify);
@@ -276,39 +295,18 @@ class ManageBotController extends Controller
     }
     public function botResult(Request $request)
     {
-        $bot_contracts = BotContract::where('id', $request->botId)->where('end_date', '<', Carbon::now())->get();
-        $gnl = GeneralSetting::first();
-        $gnl->last_cron_run =  Carbon::now();
-        $gnl->save();
+        $data = $request->validate(['botId' => 'required|integer|exists:bot_contracts,id']);
+        $response = app(CronController::class)->botResult($data['botId']);
+        $counts = $response->getData(true);
 
-        foreach($bot_contracts as $bot_contract)
-        {
-			$wallet = Wallet::where('user_id',$bot_contract->user_id)->where('symbol',$bot_contract->pair)->first();
-            
-            if($bot_contract->result == 4) {
-                // if(true){
-                $wallet->balance += $bot_contract->amount + $bot_contract->profit;
-                $wallet->save();
-                $bot_contract->result = 1;
-                $bot_contract->status = 1;
-                $bot_contract->save();
-            }
-            
-            else if($bot_contract->result == 5) {
-                $wallet->balance += $bot_contract->amount - $bot_contract->profit;
-               $wallet->save();
-               $bot_contract->result = 2;
-                $bot_contract->status = 1;
-                $bot_contract->save();
-            } else if($bot_contract->result == 6) {
-                 $wallet->balance += $bot_contract->amount;
-                $wallet->save();
-                $bot_contract->result = 3;
-                 $bot_contract->status = 1;
-                 $bot_contract->save();
-           }
-        }
-        return response()->json(['success' => true, 'message' => 'Bot results executed.' . sizeof($bot_contracts)]);
+        return response()->json([
+            'success' => $counts['failed'] === 0,
+            'message' => $counts['failed'] > 0
+                ? 'Bot settlement failed. Check the application log for the contract error.'
+                : 'Bot results executed. '.$counts['processed'],
+            'processed' => $counts['processed'],
+            'failed' => $counts['failed'],
+        ], $response->getStatusCode());
     }
 
 }

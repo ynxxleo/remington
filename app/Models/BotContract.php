@@ -10,6 +10,7 @@ class BotContract extends Model
     use HasFactory;
 
     protected $casts = [
+        'funding_wallet_id' => 'integer',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'amount' => 'decimal:2',
@@ -17,4 +18,21 @@ class BotContract extends Model
         'status' => 'integer',
         'result' => 'integer',
     ];
+
+    public function legacyFundingWalletSymbol()
+    {
+        if (strtolower($this->pair) === 'stock') {
+            return 'USDT';
+        }
+
+        $markets = json_decode(file_get_contents(resource_path('data/fxpairs.json')), true);
+        foreach ($markets['data'] ?? [] as $market) {
+            if (strtoupper($this->symbol) === strtoupper($market['symbol'])
+                && strtoupper($this->pair) === strtoupper($market['pair'])) {
+                return 'USDT';
+            }
+        }
+
+        return $this->pair;
+    }
 }

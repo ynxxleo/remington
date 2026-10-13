@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\CronController;
+use App\Http\Controllers\Admin\ManageBotController;
 use App\Models\BotContract;
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
@@ -12,8 +13,15 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Translation\ArrayLoader;
+use Illuminate\Translation\Translator;
+use Illuminate\Validation\DatabasePresenceVerifier;
+use Illuminate\Validation\Factory as ValidationFactory;
+use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\TestCase;
 
 class BotSettlementTest extends TestCase
@@ -30,13 +38,27 @@ class BotSettlementTest extends TestCase
         $this->previousContainer = Container::getInstance();
         $this->previousFacadeApplication = Facade::getFacadeApplication();
         $this->previousResolver = Model::getConnectionResolver();
-        $container = new Container();
+        $container = new Application(dirname(__DIR__, 2));
         Container::setInstance($container);
         $container->instance('config', new Repository());
         $this->database = new Capsule($container);
         $this->database->addConnection(['driver' => 'sqlite', 'database' => ':memory:']);
         $this->database->bootEloquent();
         $container->instance('db', $this->database->getDatabaseManager());
+        $validator = new ValidationFactory(new Translator(new ArrayLoader(), 'en'), $container);
+        $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->database->getDatabaseManager()));
+        $container->instance('validator', $validator);
+        $container->instance('redirect', new class {
+            public function back()
+            {
+                return $this;
+            }
+
+            public function withNotify($notifications)
+            {
+                return $notifications;
+            }
+        });
         $container->instance(ResponseFactory::class, new class {
             public function json($data, $status = 200)
             {
@@ -64,6 +86,7 @@ class BotSettlementTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2026-10-13 12:00:00', 'UTC'));
 
         $schema = $this->database->getConnection()->getSchemaBuilder();
+        $container->instance('db.schema', $schema);
         $schema->create('general_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->dateTime('last_cron_run')->nullable();
@@ -86,6 +109,7 @@ class BotSettlementTest extends TestCase
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('bot_id');
+            $table->string('symbol');
             $table->string('pair');
             $table->decimal('amount', 18, 2);
             $table->decimal('profit', 18, 2)->default(0);
@@ -94,6 +118,8 @@ class BotSettlementTest extends TestCase
             $table->dateTime('end_date');
             $table->timestamps();
         });
+        $migration = require dirname(__DIR__, 2).'/database/migrations/2026_10_13_000000_add_funding_wallet_id_to_bot_contracts.php';
+        $migration->up();
         $this->table('general_settings')->insert(['id' => 1]);
         $this->table('bots')->insert(['id' => 1, 'result_missed' => 1, 'profit_missed' => 10]);
         $this->table('wallets')->insert(['id' => 1, 'user_id' => 1, 'symbol' => 'USDT', 'balance' => 50]);
@@ -226,6 +252,163 @@ class BotSettlementTest extends TestCase
         $this->assertEquals(11600, $this->table('wallets')->value('balance'));
     }
 
+    /** @dataProvider legacyUsdtMarkets */
+    public function testLegacyFxAndStockBotsReturnFundsToUsdt($symbol, $pair): void
+    {
+        $this->table('wallets')->insert(['user_id' => 1, 'symbol' => $pair, 'balance' => 1000]);
+        $id = $this->contract(['symbol' => $symbol, 'pair' => $pair]);
+
+        $response = (new CronController())->botResult();
+
+        $this->assertSame(1, $response->getData(true)['processed']);
+        $this->assertSame(1, BotContract::find($id)->status);
+        $this->assertEquals(160, $this->table('wallets')->where('symbol', 'USDT')->value('balance'));
+        $this->assertEquals(1000, $this->table('wallets')->where('symbol', $pair)->value('balance'));
+    }
+
+    public static function legacyUsdtMarkets(): array
+    {
+        return [['EUR', 'USD'], ['USD', 'JPY'], ['GBP', 'USD'], ['TSLA', 'stock']];
+    }
+
+    public function testRecordedFundingWalletTakesPriorityOverMarketQuote(): void
+    {
+        $this->table('wallets')->insert(['id' => 2, 'user_id' => 1, 'symbol' => 'USD', 'balance' => 1000]);
+        $id = $this->contract(['symbol' => 'BTC', 'pair' => 'USD', 'funding_wallet_id' => 1]);
+
+        $this->assertSame(1, (new CronController())->botResult()->getData(true)['processed']);
+        $this->assertSame(1, BotContract::find($id)->status);
+        $this->assertEquals(160, $this->table('wallets')->where('id', 1)->value('balance'));
+        $this->assertEquals(1000, $this->table('wallets')->where('id', 2)->value('balance'));
+    }
+
+    public function testRecordedFundingWalletCannotBelongToAnotherUser(): void
+    {
+        $this->table('wallets')->insert(['id' => 2, 'user_id' => 99, 'symbol' => 'USDT', 'balance' => 1000]);
+        $id = $this->contract(['funding_wallet_id' => 2]);
+
+        $this->assertSame(1, (new CronController())->botResult()->getData(true)['failed']);
+        $this->assertSame(0, BotContract::find($id)->status);
+        $this->assertEquals(50, $this->table('wallets')->where('id', 1)->value('balance'));
+        $this->assertEquals(1000, $this->table('wallets')->where('id', 2)->value('balance'));
+    }
+
+    public function testMissingRecordedFundingWalletDoesNotFallBackToAnotherCurrency(): void
+    {
+        $id = $this->contract(['funding_wallet_id' => 900]);
+
+        $this->assertSame(1, (new CronController())->botResult()->getData(true)['failed']);
+        $this->assertSame(0, BotContract::find($id)->status);
+        $this->assertEquals(50, $this->table('wallets')->value('balance'));
+    }
+
+    public function testUnknownLegacyMarketDoesNotGuessFundingCurrency(): void
+    {
+        $id = $this->contract(['symbol' => 'BTC', 'pair' => 'ETH']);
+
+        $this->assertSame(1, (new CronController())->botResult()->getData(true)['failed']);
+        $this->assertSame(0, BotContract::find($id)->status);
+        $this->assertEquals(50, $this->table('wallets')->value('balance'));
+    }
+
+    public function testInvalidAssignedResultRemainsPending(): void
+    {
+        $id = $this->contract(['status' => 2, 'result' => 1, 'profit' => 10]);
+
+        $this->assertSame(1, (new CronController())->botResult()->getData(true)['failed']);
+        $this->assertSame(2, BotContract::find($id)->status);
+        $this->assertSame(1, BotContract::find($id)->result);
+        $this->assertEquals(50, $this->table('wallets')->value('balance'));
+    }
+
+    public function testManualSettlementOnlyProcessesTheSelectedContract(): void
+    {
+        $selected = $this->contract(['symbol' => 'EUR', 'pair' => 'USD']);
+        $other = $this->contract();
+
+        $this->assertSame(1, (new CronController())->botResult($selected)->getData(true)['processed']);
+        $this->assertSame(1, BotContract::find($selected)->status);
+        $this->assertSame(0, BotContract::find($other)->status);
+        $this->assertEquals(160, $this->table('wallets')->value('balance'));
+    }
+
+    public function testAdminCannotResetCompletedContracts(): void
+    {
+        $id = $this->contract(['status' => 1, 'result' => 1, 'profit' => 10]);
+        $response = (new ManageBotController())->set($this->adminRequest([
+            'bot_id' => $id, 'result' => 4, 'profit' => 25,
+        ]));
+
+        $this->assertSame('warning', $response[0][0]);
+        $this->assertSame(1, BotContract::find($id)->status);
+        $this->assertSame(1, BotContract::find($id)->result);
+        $this->assertEquals(10, BotContract::find($id)->profit);
+        $this->assertSame(0, (new CronController())->botResult()->getData(true)['processed']);
+        $this->assertEquals(50, $this->table('wallets')->value('balance'));
+    }
+
+    public function testAdminCannotAssignInvalidResults(): void
+    {
+        $id = $this->contract();
+        try {
+            (new ManageBotController())->set($this->adminRequest([
+                'bot_id' => $id, 'result' => 1, 'profit' => 25,
+            ]));
+            $this->fail('Invalid result must be rejected.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('result', $exception->errors());
+        }
+
+        $this->assertSame(0, BotContract::find($id)->status);
+        $this->assertSame(0, BotContract::find($id)->result);
+    }
+
+    public function testExplicitAdminCorrectionCanSettleAnInvalidPendingResult(): void
+    {
+        $id = $this->contract(['symbol' => 'EUR', 'pair' => 'USD', 'status' => 2, 'result' => 0]);
+        (new ManageBotController())->set($this->adminRequest([
+            'bot_id' => $id, 'result' => 5, 'profit' => 25,
+        ]));
+
+        $this->assertSame(5, BotContract::find($id)->result);
+        $this->assertSame(1, (new CronController())->botResult()->getData(true)['processed']);
+        $this->assertSame(2, BotContract::find($id)->result);
+        $this->assertEquals(125, $this->table('wallets')->value('balance'));
+    }
+
+    public function testFundingWalletMigrationPreservesExistingRecords(): void
+    {
+        $schema = $this->database->getConnection()->getSchemaBuilder();
+        $schema->drop('bot_contracts');
+        $schema->create('bot_contracts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->decimal('amount', 18, 2);
+        });
+        $id = $this->table('bot_contracts')->insertGetId(['amount' => 100]);
+
+        $migration = require dirname(__DIR__, 2).'/database/migrations/2026_10_13_000000_add_funding_wallet_id_to_bot_contracts.php';
+        $migration->up();
+        $migration->up();
+
+        $this->assertSame(1, $this->table('bot_contracts')->count());
+        $record = $this->table('bot_contracts')->where('id', $id)->first();
+        $this->assertEquals(100, $record->amount);
+        $this->assertNull($record->funding_wallet_id);
+    }
+
+    private function adminRequest(array $data)
+    {
+        $request = new class([], $data) extends Request {
+            public function validate(array $rules)
+            {
+                return app('validator')->make($this->all(), $rules)->validate();
+            }
+        };
+        $request->setMethod('POST');
+
+        return $request;
+    }
+
     private function table($name)
     {
         return $this->database->getConnection()->table($name);
@@ -234,7 +417,7 @@ class BotSettlementTest extends TestCase
     private function contract(array $attributes = [])
     {
         return $this->table('bot_contracts')->insertGetId(array_merge([
-            'user_id' => 1, 'bot_id' => 1, 'pair' => 'USDT', 'amount' => 100,
+            'user_id' => 1, 'bot_id' => 1, 'symbol' => 'BTC', 'pair' => 'USDT', 'amount' => 100,
             'end_date' => '2026-10-13 11:59:00',
         ], $attributes));
     }
