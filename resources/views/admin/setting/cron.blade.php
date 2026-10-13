@@ -111,13 +111,14 @@
                             <p class="cron-p-style">{{ __('locale.Bot Trader Results')}}<code>
                                     {{ __('locale.cron job')}}
                                 </code>{{ __('locale.on your server. Set the Cron time as minimum as possible. Once per')}}<code>
-                                    10-15 </code>{{ __('locale.minutes is ideal')}}.</p>
+                                    1 </code>{{ __('locale.minutes is ideal')}}.</p>
+                            <p>Completes expired bots using their assigned result or the bot's Result If Missed setting. This command also handles missed results.</p>
                         </div>
                         <div class="col-md-12">
                             <label>{{ __('locale.Cron Command')}}</label>
                             <div class="input-group">
                                 <input id="Botref" type="text" class="form-control form-control-lg"
-                                    value="curl -s {{route('bot.result')}}" readonly="">
+                                    value="curl --fail --show-error --silent --location --max-time 120 {{route('bot.result')}}" readonly="">
                                 <span id="copybtn" class="input-group-text btn-success" title=""
                                     onclick="
                                           var copyText = document.getElementById('Botref');
@@ -134,16 +135,13 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 my-2">
-                            <p class="cron-p-style">{{ __('locale.Bot Trader Results If Missed')}}<code>
-                                    {{ __('locale.cron job')}}
-                                </code>{{ __('locale.on your server. Set the Cron time as minimum as possible and less than the Bot Trader Results cron. Once per')}}<code>
-                                    5-10 </code>{{ __('locale.minutes is ideal')}}.</p>
+                            <p class="cron-p-style">{{ __('locale.Bot Trader Results If Missed')}}: this legacy command also completes expired bots. Use one of the two bot commands once per minute.</p>
                         </div>
                         <div class="col-md-12">
                             <label>{{ __('locale.Cron Command')}}</label>
                             <div class="input-group">
                                 <input id="Botmis" type="text" class="form-control form-control-lg"
-                                    value="curl -s {{route('bot.missed')}}" readonly="">
+                                    value="curl --fail --show-error --silent --location --max-time 120 {{route('bot.missed')}}" readonly="">
                                 <span id="copybtn" class="input-group-text btn-success" title=""
                                     onclick="
                                           var copyText = document.getElementById('Botmis');

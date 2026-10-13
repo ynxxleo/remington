@@ -21,6 +21,7 @@ use App\Models\ScheduledOrders;
 use App\Models\Wallet;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Http;
 
 class CronController extends Controller
@@ -142,8 +143,6 @@ class CronController extends Controller
               'Accepts: application/json',
               'X-CMC_PRO_API_KEY:'. '7e4b9ed3-a77c-46c3-adc3-f335766cfe2f'//$apiKey
             ];
-            logger('api');
-            logger($apiKey);
             $qs = http_build_query($parameters);
             $request = "{$url}?{$qs}";
 
@@ -435,81 +434,96 @@ class CronController extends Controller
 
     public function botResult()
     {
-        $bot_contracts = BotContract::where('status', 2)->where('end_date', '<=', Carbon::now())->pluck('id');
+        $counts = ['processed' => 0, 'skipped' => 0, 'failed' => 0];
         $gnl = GeneralSetting::first();
-        $gnl->last_cron_run =  Carbon::now();
-        $gnl->save();
-
-        foreach ($bot_contracts as $contractId) {
-            DB::transaction(function () use ($contractId) {
-                $contract = BotContract::whereKey($contractId)->lockForUpdate()->first();
-
-                if (! $contract || (int) $contract->status !== 2 || Carbon::parse($contract->end_date)->isFuture()) {
-                    return;
-                }
-
-                $wallet = Wallet::where('user_id', $contract->user_id)
-                    ->where('symbol', $contract->pair)
-                    ->lockForUpdate()
-                    ->first();
-
-                if (! $wallet) {
-                    return;
-                }
-
-                $settlements = [
-                    4 => ['result' => 1, 'credit' => $contract->amount + $contract->profit],
-                    5 => ['result' => 2, 'credit' => max(0, $contract->amount - $contract->profit)],
-                    6 => ['result' => 3, 'credit' => $contract->amount],
-                ];
-
-                if (! isset($settlements[$contract->result])) {
-                    return;
-                }
-
-                $settlement = $settlements[$contract->result];
-                $wallet->increment('balance', $settlement['credit']);
-                $contract->result = $settlement['result'];
-                $contract->status = 1;
-                $contract->save();
-            });
+        if ($gnl) {
+            $gnl->last_cron_run = Carbon::now();
+            $gnl->save();
         }
 
-        return response()->json(['processed' => $bot_contracts->count()]);
+        BotContract::whereIn('status', [0, 2])
+            ->where('end_date', '<=', Carbon::now())
+            ->select('id')
+            ->chunkById(100, function ($contracts) use (&$counts) {
+                foreach ($contracts as $candidate) {
+                    try {
+                        $processed = $this->settleBotContract($candidate->id);
+                        $counts[$processed ? 'processed' : 'skipped']++;
+                    } catch (\Throwable $exception) {
+                        $counts['failed']++;
+                        report(new \RuntimeException(
+                            'Bot contract '.$candidate->id.' could not be settled: '.$exception->getMessage(),
+                            0,
+                            $exception
+                        ));
+                    }
+                }
+            });
+
+        Log::info('Bot settlement completed', $counts);
+
+        return response()->json($counts, $counts['failed'] > 0 ? 500 : 200);
     }
+
+    protected function settleBotContract($contractId)
+    {
+        return DB::transaction(function () use ($contractId) {
+            $contract = BotContract::whereKey($contractId)->lockForUpdate()->first();
+
+            if (! $contract || ! in_array((int) $contract->status, [0, 2], true)
+                || Carbon::parse($contract->end_date)->isFuture()) {
+                return false;
+            }
+
+            // Assign the configured fallback and settle together, so either
+            // legacy cron URL can finish an expired, unassigned contract.
+            if ((int) $contract->status === 0) {
+                $bot = Bot::find($contract->bot_id);
+                if (! $bot || ! in_array((int) $bot->result_missed, [1, 2, 3], true)) {
+                    throw new \RuntimeException('The bot has no valid Result If Missed setting.');
+                }
+
+                $contract->result = (int) $bot->result_missed + 3;
+                $contract->profit = (int) $bot->result_missed === 3
+                    ? 0
+                    : $contract->amount * ($bot->profit_missed / 100);
+                if ($contract->profit < 0) {
+                    throw new \RuntimeException('Profit If Missed must not be negative.');
+                }
+            }
+
+            $wallet = Wallet::where('user_id', $contract->user_id)
+                ->where('symbol', $contract->pair)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $wallet) {
+                throw new \RuntimeException('The '.$contract->pair.' wallet is missing for user '.$contract->user_id.'.');
+            }
+
+            $settlements = [
+                4 => ['result' => 1, 'credit' => $contract->amount + $contract->profit],
+                5 => ['result' => 2, 'credit' => max(0, $contract->amount - $contract->profit)],
+                6 => ['result' => 3, 'credit' => $contract->amount],
+            ];
+
+            if (! isset($settlements[$contract->result])) {
+                throw new \RuntimeException('The assigned bot result is invalid.');
+            }
+
+            $settlement = $settlements[$contract->result];
+            $wallet->increment('balance', $settlement['credit']);
+            $contract->result = $settlement['result'];
+            $contract->status = 1;
+            $contract->save();
+
+            return true;
+        }, 3);
+    }
+
     public function botMissed()
     {
-        // Only expired contracts should enter the settlement pipeline.
-        $bot_contracts = BotContract::where('status', 0)->where('end_date', '<=', Carbon::now())->get();
-        $gnl = GeneralSetting::first();
-        $gnl->last_cron_run =  Carbon::now();
-        $gnl->save();
-
-        foreach($bot_contracts as $bot_contract)
-        {
-            $bot = Bot::where('id',$bot_contract->bot_id)->first();
-            if (! $bot) {
-                continue;
-            }
-            if($bot->result_missed == 1) {
-                $bot_contract->result = 4;
-                $bot_contract->status = 2;
-                $bot_contract->profit = $bot_contract->amount * ($bot->profit_missed / 100);
-                $bot_contract->save();
-            } else if($bot->result_missed == 2) {
-                $bot_contract->result = 5;
-                $bot_contract->status = 2;
-                $bot_contract->profit = $bot_contract->amount * ($bot->profit_missed / 100);
-                $bot_contract->save();
-            } else if($bot->result_missed == 3) {
-                $bot_contract->result = 6;
-                $bot_contract->status = 2;
-                $bot_contract->profit = '0';
-                $bot_contract->save();
-            }
-        }
-
-        return response()->json(['processed' => $bot_contracts->count()]);
+        return $this->botResult();
     }
 
     public function ForexResult()
